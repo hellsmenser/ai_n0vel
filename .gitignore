@@ -1,0 +1,70 @@
+# Ren'Py build artifacts & compiled bytecode
+**/*.rpyc
+**/*.rpyb
+**/cache/
+
+# Generated archives (uncomment if you don't want to version packaged assets)
+# **/*.rpa
+
+# Auto-generated scene JSON files (remove if you want them versioned)
+/game/scenes/scene_*.json
+
+# Save & persistent data
+/game/saves/
+/game/**/persistent
+
+# Logs & error traces
+log.txt
+errors.txt
+traceback.txt
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+.env/
+.env.*
+python-packages/*
+
+# IDE / Editor metadata
+.idea/
+.vscode/
+*.iml
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ren'Py build directory (if used)
+build/
+dist/
+
+# Temporary / backup files
+*.swp
+*.swo
+*~
+
+# Node / frontend (if later added)
+node_modules/
+
+# Mongo / local data dumps (if any)
+*.mongodb-dump
+*.bson.dump
+
+# If you bundle python-packages manually and want to ignore local edits, uncomment:
+# /game/python-packages/
+
+# Ignore translation auto-generated placeholder directory
+/game/tl/None/
+
+# Allow images & source scripts explicitly (override broad ignores if needed)
+!**/*.rpy
+!game/images/**
+
