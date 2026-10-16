@@ -29,7 +29,7 @@ __pycache__/
 venv/
 .env/
 .env.*
-python-packages/*
+game/python-packages/*
 
 # IDE / Editor metadata
 .idea/
