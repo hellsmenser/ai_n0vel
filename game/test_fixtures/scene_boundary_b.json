@@ -1,0 +1,8 @@
+{
+  "characters": {"kael": "Kael"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "line", "speaker": "kael", "text": "Stage0 scene B start.", "test_probe": "scene_b_start"},
+    {"type": "return"}
+  ]
+}

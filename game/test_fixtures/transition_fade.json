@@ -1,0 +1,9 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "transition", "effect": "fade"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 fade line.", "test_probe": "fade_line"},
+    {"type": "return"}
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "stage1-legacy-v0",
+  "scene": "bg_tavern_interior",
+  "characters": {"lira": "Lira"},
+  "test_probe": "legacy-top-level-probe",
+  "dialogue": [
+    {"type": "animate", "target": "lira neutral", "effect": "shake"},
+    {"type": "line", "speaker": "lira", "text": "Stage1 legacy line."},
+    {"type": "return"}
+  ]
+}

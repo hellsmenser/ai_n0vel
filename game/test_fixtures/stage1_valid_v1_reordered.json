@@ -1,0 +1,17 @@
+{
+  "dialogue": [
+    {"target": "bg_tavern_interior", "type": "scene"},
+    {"transform": {"flip": false, "alpha": 1.0, "yalign": 1.0, "xalign": 0.25}, "type": "show", "target": "lira neutral"},
+    {"metadata": {"test_probe": "stage1_valid"}, "text": "Stage1 valid line.", "speaker": "lira", "type": "line"},
+    {"duration": 0.05, "type": "pause"},
+    {"effect": "dissolve", "type": "transition"},
+    {"effect": {"repeat": 2, "duration": 0.1, "xoffset": 10, "type": "shake"}, "target": "lira neutral", "type": "animate"},
+    {"target": "stage1_contract_jump_target", "type": "jump"},
+    {"type": "return"}
+  ],
+  "characters": {"kael": "Kael", "lira": "Lira"},
+  "metadata": {"source": "native-test"},
+  "name": "Stage 1 valid contract fixture",
+  "scene_id": "stage1-valid-v1",
+  "schema_version": 1
+}

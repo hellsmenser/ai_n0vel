@@ -5,7 +5,8 @@ init python:
             dur = float(dur)
         except (TypeError, ValueError):
             dur = 1.0
-        renpy.pause(dur)
-        return False
+        checkpoint_data = renpy.pause(dur, checkpoint=False)
+        renpy.checkpoint(checkpoint_data, hard=True)
+        return PlaybackActionResult.continue_()
 
     register_act_handler("pause", handle_pause)

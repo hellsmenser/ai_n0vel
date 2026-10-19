@@ -1,0 +1,9 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "music"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 unknown action was skipped.", "test_probe": "unknown_after"},
+    {"type": "return"}
+  ]
+}

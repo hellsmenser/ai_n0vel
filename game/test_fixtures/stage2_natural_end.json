@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-natural-end",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 natural end.", "metadata": {"test_probe": "stage2_natural_end"}}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_forest"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 scene A end.", "test_probe": "scene_a_end"},
+    {"type": "return"}
+  ]
+}

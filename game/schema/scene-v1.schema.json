@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-novel.local/schema/scene-v1.schema.json",
+  "title": "AI Novel scene contract v1",
+  "description": "Machine-readable v1 scene shape. Ren'Py's playback_contract.rpy is authoritative for duplicate keys, resource checks, migration and semantic bounds. Metadata is inert extension data. Jump labels are validated here in Stage 1; execution is deferred to Stage 2.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scene_id", "characters", "dialogue"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "scene_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "name": {"type": "string", "maxLength": 4096},
+    "metadata": {"type": "object"},
+    "characters": {"type": "object", "maxProperties": 64, "propertyNames": {"minLength": 1, "maxLength": 256}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 256}},
+    "dialogue": {"type": "array", "maxItems": 500, "items": {"$ref": "#/$defs/action"}}
+  },
+  "$defs": {
+    "metadata": {"type": "object"},
+    "action": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "scene"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "show"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "transform": {"type": "object", "additionalProperties": false, "properties": {"xalign": {"type": "number"}, "yalign": {"type": "number"}, "alpha": {"type": "number"}, "flip": {"type": "boolean"}}}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "speaker", "text"], "properties": {"type": {"const": "line"}, "speaker": {"type": "string", "minLength": 1, "maxLength": 256}, "text": {"type": "string", "maxLength": 4000}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "duration"], "properties": {"type": {"const": "pause"}, "duration": {"type": "number", "minimum": 0, "maximum": 60}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "effect"], "properties": {"type": {"const": "transition"}, "effect": {"enum": ["fade", "dissolve"]}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "target", "effect"], "properties": {"type": {"const": "animate"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "effect": {"type": "object", "additionalProperties": false, "required": ["type"], "properties": {"type": {"const": "shake"}, "xoffset": {"type": "number", "minimum": 1, "maximum": 200}, "duration": {"type": "number", "exclusiveMinimum": 0, "maximum": 2}, "repeat": {"type": "integer", "minimum": 1, "maximum": 20}}}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "jump"}, "target": {"type": "string", "enum": ["next_scene"]}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type"], "properties": {"type": {"const": "return"}, "metadata": {"$ref": "#/$defs/metadata"}}}
+      ]
+    }
+  }
+}

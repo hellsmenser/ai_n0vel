@@ -1,0 +1,10 @@
+{
+  "characters": {"kael": "Kael"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_forest"},
+    {"type": "line", "speaker": "kael", "text": "Stage0 rollback early.", "test_probe": "rollback_early"},
+    {"type": "line", "speaker": "kael", "text": "Stage0 rollback middle.", "test_probe": "rollback_middle"},
+    {"type": "line", "speaker": "kael", "text": "Stage0 rollback late.", "test_probe": "rollback_late"},
+    {"type": "return"}
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "characters": {
+    "lira": "Lira",
+    "kael": "Kael"
+  },
+  "dialogue": [
+    {"type": "scene", "target": "bg_forest"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 automatic line one.", "test_probe": "automatic_one"},
+    {"type": "line", "speaker": "kael", "text": "Stage0 automatic line two.", "test_probe": "automatic_two"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 automatic line three.", "test_probe": "automatic_three"},
+    {"type": "return"}
+  ]
+}

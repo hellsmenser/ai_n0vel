@@ -1,0 +1,9 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 return before.", "test_probe": "before_return"},
+    {"type": "return"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 return sentinel.", "test_probe": "after_return"}
+  ]
+}

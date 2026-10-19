@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-boundary-b",
+  "characters": {"kael": "Kael"},
+  "dialogue": [
+    {"type": "line", "speaker": "kael", "text": "Stage2 boundary B.", "metadata": {"test_probe": "stage2_boundary_b"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_boundary_b_return"}}
+  ]
+}

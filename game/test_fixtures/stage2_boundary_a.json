@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-boundary-a",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 boundary A.", "metadata": {"test_probe": "stage2_boundary_a"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_boundary_a_return"}}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg campfire"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 missing background fell through.", "test_probe": "missing_background_line"},
+    {"type": "return"}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 save early.", "test_probe": "save_early"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 save middle.", "test_probe": "save_middle"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 save late.", "test_probe": "save_late"},
+    {"type": "return"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage4-provider-retry",
+  "characters": {
+    "lira": "Lira"
+  },
+  "dialogue": [
+    {
+      "type": "line",
+      "speaker": "lira",
+      "text": "Stage4 provider scene line.",
+      "metadata": {
+        "test_probe": "stage4_provider_line"
+      }
+    },
+    {
+      "type": "return"
+    }
+  ]
+}

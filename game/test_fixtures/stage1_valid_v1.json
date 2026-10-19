@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage1-valid-v1",
+  "name": "Stage 1 valid contract fixture",
+  "metadata": {"source": "native-test"},
+  "characters": {"lira": "Lira", "kael": "Kael"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "show", "target": "lira neutral", "transform": {"xalign": 0.25, "yalign": 1.0, "alpha": 1.0, "flip": false}},
+    {"type": "line", "speaker": "lira", "text": "Stage1 valid line.", "metadata": {"test_probe": "stage1_valid"}},
+    {"type": "pause", "duration": 0.05},
+    {"type": "transition", "effect": "dissolve"},
+    {"type": "animate", "target": "lira neutral", "effect": {"type": "shake", "xoffset": 10, "duration": 0.1, "repeat": 2}},
+    {"type": "jump", "target": "stage1_contract_jump_target"},
+    {"type": "return"}
+  ]
+}

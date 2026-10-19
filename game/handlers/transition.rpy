@@ -5,14 +5,15 @@ init python:
     def handle_transition(step, chars):
         eff_name = step.get("effect", "fade").lower()
         if eff_name == "fade":
-            eff = Fade(0.5, 0.0, 0.5)
+            # Ren'Py instantiates transition factories with old/new widgets.
+            # Passing an already-created Fade (a MultipleTransition) makes it
+            # get called again and raises "MultipleTransition is not callable".
+            eff = renpy.curry(Fade)(0.5, 0.0, 0.5)
         elif eff_name == "dissolve":
-            eff = Dissolve(0.5, 0.0, 0.5)
-        elif eff_name == "move":
-            eff = Move(duration=0.5, enter=True, old=False)
+            eff = renpy.curry(Dissolve)(0.5)
         else:
-            eff = Fade(0.5, 0.0, 0.5)
-        renpy.transition(eff)
-        return False
+            return PlaybackActionResult.continue_()
+        renpy.with_statement(eff)
+        return PlaybackActionResult.continue_()
 
     register_act_handler("transition", handle_transition)

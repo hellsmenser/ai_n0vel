@@ -1,0 +1,12 @@
+{
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_forest"},
+    {"type": "show", "target": "lira neutral"},
+    {"type": "animate", "target": "lira neutral", "effect": {"type": "shake"}},
+    {"type": "line", "speaker": "lira", "text": "Stage0 object animate observed.", "test_probe": "animate_object_line"},
+    {"type": "animate", "target": "lira neutral", "effect": "shake"},
+    {"type": "line", "speaker": "lira", "text": "Stage0 string animate observed.", "test_probe": "animate_string_line"},
+    {"type": "return"}
+  ]
+}

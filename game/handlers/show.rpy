@@ -12,6 +12,6 @@ init python:
             renpy.show(target, at_list=[t])
         else:
             renpy.show(target)
-        return False
+        return PlaybackActionResult.continue_()
 
     register_act_handler("show", handle_show)

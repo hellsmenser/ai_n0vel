@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-progression-12",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 1.", "metadata": {"test_probe": "stage2_progress_1"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 2.", "metadata": {"test_probe": "stage2_progress_2"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 3.", "metadata": {"test_probe": "stage2_progress_3"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 4.", "metadata": {"test_probe": "stage2_progress_4"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 5.", "metadata": {"test_probe": "stage2_progress_5"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 6.", "metadata": {"test_probe": "stage2_progress_6"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 7.", "metadata": {"test_probe": "stage2_progress_7"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 8.", "metadata": {"test_probe": "stage2_progress_8"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 9.", "metadata": {"test_probe": "stage2_progress_9"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 10.", "metadata": {"test_probe": "stage2_progress_10"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 11.", "metadata": {"test_probe": "stage2_progress_11"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 progress 12.", "metadata": {"test_probe": "stage2_progress_12"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_progress_return"}}
+  ]
+}

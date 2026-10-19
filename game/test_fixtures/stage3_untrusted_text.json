@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage3-untrusted-text",
+  "characters": {
+    "attacker": "{a=jump:start}Attacker{/a}"
+  },
+  "dialogue": [
+    {
+      "type": "line",
+      "speaker": "attacker",
+      "text": "Unsafe [stage3_missing_secret] {a=jump:start}link{/a} 【ruby】",
+      "metadata": {"test_probe": "stage3_untrusted_text"}
+    },
+    {"type": "return"}
+  ]
+}

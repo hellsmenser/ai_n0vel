@@ -333,6 +333,48 @@ screen navigation():
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
 
+
+screen scene_provider_error(error):
+    modal True
+    zorder 200
+
+    add Solid("#000a")
+
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xmaximum 900
+        padding (48, 36)
+
+        vbox:
+            spacing 20
+
+            text _("Scene unavailable"):
+                size 42
+                xalign 0.5
+
+            text error.code:
+                substitute False
+                xalign 0.5
+
+            text error.message:
+                substitute False
+                xalign 0.5
+                text_align 0.5
+
+            hbox:
+                spacing 30
+                xalign 0.5
+
+                textbutton _("Retry"):
+                    id "retry"
+                    action Return("retry")
+                    sensitive error.retryable
+
+                textbutton _("Main Menu"):
+                    id "main_menu"
+                    action Return("main_menu")
+
 style navigation_button:
     size_group "navigation"
     properties gui.button_properties("navigation_button")
@@ -899,7 +941,12 @@ screen history():
 
         for h in _history_list:
 
-            window:
+            $ history_rollback = RollbackToIdentifier(h.rollback_identifier) if getattr(h, "rollback_identifier", None) is not None else None
+
+            button:
+                style "history_window"
+                action history_rollback
+                sensitive history_rollback is not None and history_rollback.get_sensitive()
 
                 ## This lays things out properly if history_height is None.
                 has fixed:

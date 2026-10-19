@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage1-player-invalid-v1",
+  "characters": {
+    "lira": "Lira"
+  },
+  "dialogue": [
+    {
+      "type": "music",
+      "track": "not-supported.ogg"
+    },
+    {
+      "type": "line",
+      "speaker": "lira",
+      "text": "Stage1 invalid line must not execute.",
+      "metadata": {
+        "test_probe": "stage1_player_invalid_line"
+      }
+    }
+  ]
+}

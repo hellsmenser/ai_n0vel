@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-save-load",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 save 1.", "metadata": {"test_probe": "stage2_save_1"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 save 2.", "metadata": {"test_probe": "stage2_save_2"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 save 3.", "metadata": {"test_probe": "stage2_save_3"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_save_return"}}
+  ]
+}

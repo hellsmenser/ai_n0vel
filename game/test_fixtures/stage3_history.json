@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage3-history",
+  "characters": {
+    "lira": "Lira",
+    "kael": "Kael"
+  },
+  "dialogue": [
+    {"type": "scene", "target": "bg_tavern_interior"},
+    {"type": "line", "speaker": "lira", "text": "Stage3 history one.", "metadata": {"test_probe": "stage3_history_one"}},
+    {"type": "line", "speaker": "kael", "text": "Stage3 history two.", "metadata": {"test_probe": "stage3_history_two"}},
+    {"type": "line", "speaker": "lira", "text": "Stage3 history three.", "metadata": {"test_probe": "stage3_history_three"}},
+    {"type": "return"}
+  ]
+}

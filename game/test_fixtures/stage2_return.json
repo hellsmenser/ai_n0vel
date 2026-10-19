@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-return",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 return before.", "metadata": {"test_probe": "stage2_return_before"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_return_action"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 return sentinel.", "metadata": {"test_probe": "stage2_return_after"}}
+  ]
+}

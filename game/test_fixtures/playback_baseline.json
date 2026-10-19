@@ -1,0 +1,50 @@
+{
+  "characters": {
+    "lira": "Лира",
+    "kael": "Каэль"
+  },
+  "dialogue": [
+    {
+      "type": "scene",
+      "target": "bg_tavern_interior"
+    },
+    {
+      "type": "show",
+      "target": "lira neutral",
+      "transform": {
+        "xalign": 0.25,
+        "yalign": 1.0
+      }
+    },
+    {
+      "type": "line",
+      "speaker": "lira",
+      "text": "(fixture) Лира проверяет базовый проигрыватель."
+    },
+    {
+      "type": "show",
+      "target": "kael serious",
+      "transform": {
+        "xalign": 0.75,
+        "yalign": 1.0
+      }
+    },
+    {
+      "type": "line",
+      "speaker": "kael",
+      "text": "(fixture) Каэль видит вторую реплику."
+    },
+    {
+      "type": "pause",
+      "duration": 0.05
+    },
+    {
+      "type": "line",
+      "speaker": "lira",
+      "text": "(fixture) Лира завершает проверку."
+    },
+    {
+      "type": "return"
+    }
+  ]
+}

@@ -17,6 +17,7 @@
 log.txt
 errors.txt
 traceback.txt
+/test-artifacts/
 
 # Python caches
 __pycache__/

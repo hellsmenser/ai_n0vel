@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-handler-error",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "scene", "target": "bg_forest", "metadata": {"test_probe": "stage2_handler_scene"}},
+    {"type": "transition", "effect": "fade", "metadata": {"test_probe": "stage2_handler_transition"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 handler sentinel.", "metadata": {"test_probe": "stage2_handler_after_error"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_handler_return"}}
+  ]
+}

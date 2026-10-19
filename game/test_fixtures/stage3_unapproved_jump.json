@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage3-unapproved-jump",
+  "characters": {},
+  "dialogue": [
+    {"type": "jump", "target": "start"}
+  ]
+}

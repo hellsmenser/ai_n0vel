@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-jump",
+  "characters": {},
+  "dialogue": [
+    {"type": "jump", "target": "stage2_jump_control_target", "metadata": {"test_probe": "stage2_jump_action"}}
+  ]
+}

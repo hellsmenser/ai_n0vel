@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "scene_id": "stage2-pause-checkpoint",
+  "characters": {"lira": "Lira"},
+  "dialogue": [
+    {"type": "line", "speaker": "lira", "text": "Stage2 pause before.", "metadata": {"test_probe": "stage2_pause_before"}},
+    {"type": "pause", "duration": 0.05, "metadata": {"test_probe": "stage2_pause_action"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 pause after.", "metadata": {"test_probe": "stage2_pause_after"}},
+    {"type": "line", "speaker": "lira", "text": "Stage2 pause sentinel.", "metadata": {"test_probe": "stage2_pause_sentinel"}},
+    {"type": "return", "metadata": {"test_probe": "stage2_pause_return"}}
+  ]
+}
