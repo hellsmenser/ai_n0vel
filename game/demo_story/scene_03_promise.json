@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "scene_id": "demo_after_bell_03",
+  "name": "Обещание",
+  "characters": {
+    "akari": "Акари",
+    "ren": "Рэн"
+  },
+  "ui": {
+    "theme_id": "literary",
+    "palette_id": "sepia",
+    "font_pack_id": "literary_serif"
+  },
+  "dialogue": [
+    {"type": "scene", "target": "bg academy rooftop blue hour"},
+    {"type": "transition", "effect": "dissolve"},
+    {"type": "show", "target": "akari school closed", "transform": {"slot": "left", "yalign": 1.0}},
+    {"type": "show", "target": "ren school neutral", "transform": {"slot": "right", "yalign": 1.0, "flip": true}},
+    {"type": "line", "speaker": "ren", "text": "Запись сохранена. Завтра сравним её с архивом школьной станции."},
+    {"type": "line", "speaker": "akari", "text": "А если сигнал исчезнет?"},
+    {"type": "animate", "target": "akari school closed", "effect": {"type": "shake", "xoffset": 8, "duration": 0.05, "repeat": 1}},
+    {"type": "pause", "duration": 0.2},
+    {"type": "show", "target": "akari school open", "transform": {"slot": "left", "yalign": 1.0}},
+    {"type": "line", "speaker": "akari", "text": "Тогда хотя бы останется наша первая совместная тайна."},
+    {"type": "line", "speaker": "ren", "text": "Договорились. После звонка — здесь."},
+    {"type": "return"}
+  ]
+}

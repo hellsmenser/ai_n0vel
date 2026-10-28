@@ -87,7 +87,7 @@ define gui.title_text_size = 75
 ## Main and Game Menus #########################################################
 
 ## The images used for the main and game menus.
-define gui.main_menu_background = "gui/main_menu.png"
+define gui.main_menu_background = "gui/main_menu_background.png"
 define gui.game_menu_background = "gui/game_menu.png"
 
 
@@ -115,8 +115,8 @@ define gui.name_xalign = 0.0
 
 ## The width, height, and borders of the box containing the character's name, or
 ## None to automatically size it.
-define gui.namebox_width = None
-define gui.namebox_height = None
+define gui.namebox_width = 420
+define gui.namebox_height = 72
 
 ## The borders of the box containing the character's name, in left, top, right,
 ## bottom order.

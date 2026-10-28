@@ -178,7 +178,6 @@ testcase stage0_missing_background:
 
 testcase stage0_start_without_mongo:
     run Start("start")
-    click until "Запуск. Формирую очередь сцен..."
     click until "Main Menu"
     assert stage4_error_field(scene_client_error, "code") == "provider_offline"
     assert main_menu
@@ -802,8 +801,11 @@ testcase stage4_poll_work_is_bounded:
 testcase stage4_offline_timeout_is_bounded:
     $ _test.timeout = 7.0
     run Start("start")
-    click until "Запуск. Формирую очередь сцен..."
-    click until "Main Menu"
+    pause 3.0
+    assert renpy.get_screen("scene_provider_error") is not None
+    "Main Menu"
+    pause 0.3
+    assert main_menu
     assert stage4_error_field(scene_client_error, "code") == "provider_offline"
     assert stage4_error_field(scene_client_error, "operation") == "poll"
     assert main_menu
@@ -813,8 +815,11 @@ testcase stage4_offline_timeout_is_bounded:
 testcase stage4_structured_error_main_menu:
     $ _test.timeout = 10.0
     run Start("stage4_provider_main_menu_start")
-    click until "Запуск. Формирую очередь сцен..."
-    click until "Main Menu"
+    pause 0.5
+    assert renpy.get_screen("scene_provider_error") is not None
+    "Main Menu"
+    pause 0.3
+    assert main_menu
     assert stage4_error_field(scene_client_error, "code") == "provider_offline"
     assert stage4_error_field(scene_client_error, "operation") == "poll"
     assert stage4_error_field(scene_client_error, "retryable") is True
@@ -826,8 +831,6 @@ testcase stage4_structured_error_main_menu:
 testcase stage4_retry_ack_without_replay_and_boundary_autosave:
     $ _test.timeout = 15.0
     run Start("stage4_provider_retry_start")
-    click until "Запуск. Формирую очередь сцен..."
-    click until "Проигрываю сцену"
     click until "Stage4 provider scene line."
     click until "Retry"
     click until "Stage4 provider retry complete."
@@ -836,6 +839,8 @@ testcase stage4_retry_ack_without_replay_and_boundary_autosave:
     assert stage4_retry_fake.ack_calls == 2
     assert stage4_retry_events.count("autosave") == 1
     assert stage4_retry_events.index("ack:success") < stage4_retry_events.index("autosave")
+    assert stage0_history_count("Запуск. Формирую очередь сцен...") == 0
+    assert stage0_history_count("Проигрываю сцену") == 0
     assert len(stage4_retry_autosaves) == 1
     assert stage4_retry_autosaves[0]["ack_succeeded"] is True
     assert stage4_retry_autosaves[0]["active_ref"] is None

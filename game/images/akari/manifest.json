@@ -1,0 +1,235 @@
+{
+  "version": 8,
+  "canvas": [
+    1024,
+    1536
+  ],
+  "render_mode": "whole_sprite",
+  "layer_order": [
+    "sprite"
+  ],
+  "poses": [
+    {
+      "id": "neutral",
+      "title": "\u041d\u0435\u0439\u0442\u0440\u0430\u043b\u044c\u043d\u0430\u044f",
+      "file": "01_neutral.png"
+    },
+    {
+      "id": "open",
+      "title": "\u041e\u0442\u043a\u0440\u044b\u0442\u0430\u044f",
+      "file": "02_open.png"
+    },
+    {
+      "id": "closed",
+      "title": "\u0417\u0430\u043a\u0440\u044b\u0442\u0430\u044f",
+      "file": "03_closed.png"
+    },
+    {
+      "id": "confident",
+      "title": "\u0423\u0432\u0435\u0440\u0435\u043d\u043d\u0430\u044f",
+      "file": "04_confident.png"
+    },
+    {
+      "id": "ready",
+      "title": "\u0412 \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u0438",
+      "file": "05_ready.png"
+    },
+    {
+      "id": "embarrassed",
+      "title": "\u0421\u043c\u0443\u0449\u0451\u043d\u043d\u0430\u044f",
+      "file": "06_embarrassed.png"
+    },
+    {
+      "id": "determined",
+      "title": "\u0420\u0435\u0448\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f",
+      "file": "07_determined.png"
+    }
+  ],
+  "outfits": [
+    {
+      "id": "casual",
+      "title": "\u041f\u043e\u0432\u0441\u0435\u0434\u043d\u0435\u0432\u043d\u0430\u044f",
+      "directory": "casual"
+    },
+    {
+      "id": "school",
+      "title": "\u0410\u043a\u0430\u0434\u0435\u043c\u0438\u044f",
+      "directory": "school"
+    },
+    {
+      "id": "scifi",
+      "title": "\u0421\u0442\u0430\u043d\u0446\u0438\u044f",
+      "directory": "scifi"
+    }
+  ],
+  "sprites": {
+    "casual/01_neutral.png": {
+      "sprite_id": "casual/01_neutral.png",
+      "sprite": "images/akari/sprites/casual/01_neutral.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/02_open.png": {
+      "sprite_id": "casual/02_open.png",
+      "sprite": "images/akari/sprites/casual/02_open.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/03_closed.png": {
+      "sprite_id": "casual/03_closed.png",
+      "sprite": "images/akari/sprites/casual/03_closed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/04_confident.png": {
+      "sprite_id": "casual/04_confident.png",
+      "sprite": "images/akari/sprites/casual/04_confident.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/05_ready.png": {
+      "sprite_id": "casual/05_ready.png",
+      "sprite": "images/akari/sprites/casual/05_ready.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/06_embarrassed.png": {
+      "sprite_id": "casual/06_embarrassed.png",
+      "sprite": "images/akari/sprites/casual/06_embarrassed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "casual/07_determined.png": {
+      "sprite_id": "casual/07_determined.png",
+      "sprite": "images/akari/sprites/casual/07_determined.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/01_neutral.png": {
+      "sprite_id": "school/01_neutral.png",
+      "sprite": "images/akari/sprites/school/01_neutral.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/02_open.png": {
+      "sprite_id": "school/02_open.png",
+      "sprite": "images/akari/sprites/school/02_open.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/03_closed.png": {
+      "sprite_id": "school/03_closed.png",
+      "sprite": "images/akari/sprites/school/03_closed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/04_confident.png": {
+      "sprite_id": "school/04_confident.png",
+      "sprite": "images/akari/sprites/school/04_confident.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/05_ready.png": {
+      "sprite_id": "school/05_ready.png",
+      "sprite": "images/akari/sprites/school/05_ready.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/06_embarrassed.png": {
+      "sprite_id": "school/06_embarrassed.png",
+      "sprite": "images/akari/sprites/school/06_embarrassed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/07_determined.png": {
+      "sprite_id": "school/07_determined.png",
+      "sprite": "images/akari/sprites/school/07_determined.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/01_neutral.png": {
+      "sprite_id": "scifi/01_neutral.png",
+      "sprite": "images/akari/sprites/scifi/01_neutral.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/02_open.png": {
+      "sprite_id": "scifi/02_open.png",
+      "sprite": "images/akari/sprites/scifi/02_open.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/03_closed.png": {
+      "sprite_id": "scifi/03_closed.png",
+      "sprite": "images/akari/sprites/scifi/03_closed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/04_confident.png": {
+      "sprite_id": "scifi/04_confident.png",
+      "sprite": "images/akari/sprites/scifi/04_confident.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/05_ready.png": {
+      "sprite_id": "scifi/05_ready.png",
+      "sprite": "images/akari/sprites/scifi/05_ready.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/06_embarrassed.png": {
+      "sprite_id": "scifi/06_embarrassed.png",
+      "sprite": "images/akari/sprites/scifi/06_embarrassed.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "scifi/07_determined.png": {
+      "sprite_id": "scifi/07_determined.png",
+      "sprite": "images/akari/sprites/scifi/07_determined.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    }
+  }
+}

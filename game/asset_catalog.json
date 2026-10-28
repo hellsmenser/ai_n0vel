@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "id": "characters",
+      "title": "Персонажи"
+    },
+    {
+      "id": "locations",
+      "title": "Локации"
+    }
+  ],
+  "assets": [
+    {
+      "id": "lira",
+      "library_hidden": true,
+      "category": "characters",
+      "title": "Лира",
+      "description": "Вдумчивая героиня с выразительной и тёплой визуальной подачей.",
+      "tags": ["heroine", "calm", "fantasy"],
+      "variants": [
+        {
+          "id": "neutral",
+          "title": "Нейтральная",
+          "preview": "images/lira/lira neutral.webp",
+          "image_name": "lira neutral"
+        },
+        {
+          "id": "smile",
+          "title": "Улыбка",
+          "preview": "images/lira/lira smile.webp",
+          "image_name": "lira smile"
+        },
+        {
+          "id": "sad",
+          "title": "Грусть",
+          "preview": "images/lira/lira sad.webp",
+          "image_name": "lira sad"
+        },
+        {
+          "id": "angry",
+          "title": "Злость",
+          "preview": "images/lira/lira angry.webp",
+          "image_name": "lira angry"
+        }
+      ]
+    },
+    {
+      "id": "kael",
+      "library_hidden": true,
+      "category": "characters",
+      "title": "Каэль",
+      "description": "Сдержанный спутник для серьёзных, напряжённых и камерных сцен.",
+      "tags": ["companion", "reserved", "fantasy"],
+      "variants": [
+        {
+          "id": "neutral",
+          "title": "Нейтральный",
+          "preview": "images/kael/kael neutral.webp",
+          "image_name": "kael neutral"
+        },
+        {
+          "id": "serious",
+          "title": "Серьёзный",
+          "preview": "images/kael/kael serious.webp",
+          "image_name": "kael serious"
+        },
+        {
+          "id": "tired",
+          "title": "Усталый",
+          "preview": "images/kael/kael tired.webp",
+          "image_name": "kael tired"
+        }
+      ]
+    },
+    {
+      "id": "akari",
+      "category": "characters",
+      "title": "Акари",
+      "description": "Атлетичная героиня с высоким хвостом: семь поз и три динамически собираемых комплекта одежды.",
+      "tags": ["heroine", "athletic", "sprite-pack", "experimental"],
+      "enabled_by_default": false,
+      "variants": [
+        {
+          "id": "constructed",
+          "title": "Конструктор",
+          "preview": "images/akari/sprites/base/01_neutral.png",
+          "image_name": "akari"
+        }
+      ],
+      "constructor": {
+        "defaults": {
+          "pose": "neutral",
+          "outfit": "casual"
+        },
+        "sprite_manifest": "images/akari/manifest.json",
+        "preview_mode": "whole_sprite"
+      }
+    },
+    {
+      "id": "ren",
+      "category": "characters",
+      "title": "\u0420\u044d\u043d",
+      "description": "\u0421\u043f\u043e\u043a\u043e\u0439\u043d\u044b\u0439 \u0438 \u043d\u0430\u0431\u043b\u044e\u0434\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u0448\u043a\u043e\u043b\u044c\u043d\u0438\u043a, \u0441\u043e\u0437\u0434\u0430\u043d\u043d\u044b\u0439 \u0434\u043b\u044f \u0434\u0435\u043c\u043e\u043d\u0441\u0442\u0440\u0430\u0446\u0438\u043e\u043d\u043d\u043e\u0433\u043e \u0434\u0438\u0430\u043b\u043e\u0433\u0430 \u0441 \u0410\u043a\u0430\u0440\u0438.",
+      "tags": ["student", "companion", "school", "demo"],
+      "variants": [
+        {
+          "id": "constructed",
+          "title": "\u041a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0442\u043e\u0440",
+          "preview": "images/demo/ren/01_neutral.png",
+          "image_name": "ren school neutral"
+        }
+      ],
+      "constructor": {
+        "defaults": {
+          "pose": "neutral",
+          "outfit": "school"
+        },
+        "sprite_manifest": "images/demo/ren/manifest.json",
+        "preview_mode": "whole_sprite"
+      }
+    },
+    {
+      "id": "forest",
+      "category": "locations",
+      "title": "Лес",
+      "description": "Солнечная лесная поляна для путешествий, загадок и тихих разговоров.",
+      "tags": ["nature", "day", "mystery"],
+      "variants": [
+        {
+          "id": "day",
+          "title": "День",
+          "preview": "images/bg/bg_forest.jpg",
+          "image_name": "bg_forest"
+        }
+      ]
+    },
+    {
+      "id": "tavern_interior",
+      "category": "locations",
+      "title": "Таверна",
+      "description": "Тёплый интерьер для встреч, слухов и начала путешествия.",
+      "tags": ["interior", "warm", "fantasy"],
+      "variants": [
+        {
+          "id": "warm",
+          "title": "Тёплый свет",
+          "preview": "images/bg/bg_tavern_interior.jpg",
+          "image_name": "bg_tavern_interior"
+        }
+      ]
+    },
+    {
+      "id": "academy_corridor_evening",
+      "category": "locations",
+      "title": "Школьный коридор",
+      "description": "Школьный коридор в вечернем свете для спокойных и напряжённых сцен после занятий.",
+      "tags": ["school", "interior", "evening", "demo"],
+      "variants": [
+        {
+          "id": "evening",
+          "title": "Вечер",
+          "preview": "images/demo/backgrounds/academy_corridor_evening.png",
+          "image_name": "bg academy corridor evening"
+        }
+      ]
+    },
+    {
+      "id": "academy_rooftop_blue_hour",
+      "category": "locations",
+      "title": "Школьная крыша",
+      "description": "Школьная крыша в синий час для кульминационных разговоров и перехода к ночной сцене.",
+      "tags": ["school", "exterior", "blue-hour", "demo"],
+      "variants": [
+        {
+          "id": "blue_hour",
+          "title": "Синий час",
+          "preview": "images/demo/backgrounds/academy_rooftop_blue_hour.png",
+          "image_name": "bg academy rooftop blue hour"
+        }
+      ]
+    }
+  ]
+}

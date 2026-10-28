@@ -41,6 +41,15 @@ init -50 python:
                 "queue_session_id": queue_session_id,
                 "previous": str(previous_id) if previous_id else None,
             }
+            launch_payload = getattr(renpy.store, "story_launch_payload", None)
+            if isinstance(launch_payload, dict):
+                # The full brief seeds the root task. UI intent is repeated on
+                # every scene task so the selected visual language survives
+                # bounded queue refill and later scene generation.
+                if previous_id is None and "story_request" in launch_payload:
+                    payload["story_request"] = launch_payload["story_request"]
+                if "ui" in launch_payload:
+                    payload["ui"] = launch_payload["ui"]
             idempotency_key = "{}:{}".format(queue_session_id, previous_id or "root")
             new_id = create_task("demo_test", payload, idempotency_key=idempotency_key)
             if not new_id:
@@ -185,7 +194,27 @@ init -50 python:
             pass
 
 screen wait_task(task_id=None, msg="Думаю..."):
-    text msg xalign 0.5 yalign 0.4
+    $ _theme_id = active_theme_id(neutral_shell=main_menu)
+
+    add Solid(theme_color("veil", theme_id=_theme_id))
+
+    frame:
+        id "themed_wait_panel"
+        xalign 0.5
+        yalign 0.4
+        xsize 900
+        yminimum 230
+        padding (90, 65)
+        background theme_frame("pause_menu_frame.png", theme_id=_theme_id, legacy="gui/frame.png")
+
+        text msg:
+            id "message"
+            xalign 0.5
+            text_align 0.5
+            font theme_font("title", theme_id=_theme_id)
+            color theme_color("text", theme_id=_theme_id)
+            size 40
+
     timer 0.5 action Return()
 
 screen scene_poll():

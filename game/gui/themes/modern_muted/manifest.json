@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "id": "modern_muted",
+  "display_name": "Modern Muted",
+  "kind": "modified",
+  "inherits": "default",
+  "target_resolution": [
+    1920,
+    1080
+  ],
+  "colors": {
+    "panel": "#C9C2B5E8",
+    "panel_alt": "#B4B1A9EE",
+    "border": "#625F5AA8",
+    "accent": "#607B78FF",
+    "accent_secondary": "#869894FF",
+    "text": "#292B2BFF",
+    "muted_text": "#555B5AFF",
+    "heading_text": "#292B2BFF",
+    "overlay_text": "#F1F4F5FF",
+    "button_hover_text": "#292B2BFF",
+    "hover": "#D9D2C5F2",
+    "overlay": "#171817B8"
+  },
+  "fonts": {
+    "interface": [
+      "gui/themes/fonts/fira_sans/FiraSans-Regular.ttf"
+    ],
+    "dialogue": [
+      "gui/themes/fonts/fira_sans/FiraSans-Regular.ttf"
+    ],
+    "name": [
+      "gui/themes/fonts/fira_sans/FiraSans-Bold.ttf"
+    ],
+    "history": [
+      "gui/themes/fonts/fira_sans/FiraSans-Regular.ttf"
+    ]
+  },
+  "assets": {
+    "dialogue_frame": {
+      "file": "dialogue_frame.png",
+      "size": [
+        1728,
+        300
+      ],
+      "slice": [
+        160,
+        60,
+        160,
+        60
+      ]
+    },
+    "namebox_frame": {
+      "file": "namebox_frame.png",
+      "size": [
+        420,
+        72
+      ],
+      "slice": [
+        80,
+        28,
+        80,
+        28
+      ]
+    },
+    "choice_idle": {
+      "file": "choice_idle.png",
+      "size": [
+        1100,
+        92
+      ],
+      "slice": [
+        150,
+        36,
+        150,
+        36
+      ]
+    },
+    "choice_hover": {
+      "file": "choice_hover.png",
+      "size": [
+        1100,
+        92
+      ],
+      "slice": [
+        150,
+        36,
+        150,
+        36
+      ]
+    },
+    "pause_history_frame": {
+      "file": "pause_history_frame.png",
+      "size": [
+        1280,
+        1080
+      ],
+      "slice": [
+        180,
+        80,
+        180,
+        80
+      ]
+    },
+    "pause_menu_frame": {
+      "file": "pause_menu_frame.png",
+      "size": [
+        640,
+        1080
+      ],
+      "slice": [
+        180,
+        80,
+        180,
+        80
+      ]
+    },
+    "nav_idle": {
+      "file": "nav_idle.png",
+      "size": [
+        260,
+        70
+      ],
+      "slice": [
+        80,
+        28,
+        80,
+        28
+      ]
+    },
+    "nav_hover": {
+      "file": "nav_hover.png",
+      "size": [
+        260,
+        70
+      ],
+      "slice": [
+        80,
+        28,
+        80,
+        28
+      ]
+    },
+    "scrollbar_track": {
+      "file": "scrollbar_track.png",
+      "size": [
+        18,
+        700
+      ],
+      "slice": [
+        8,
+        18,
+        8,
+        18
+      ]
+    },
+    "scrollbar_thumb": {
+      "file": "scrollbar_thumb.png",
+      "size": [
+        18,
+        160
+      ],
+      "slice": [
+        8,
+        18,
+        8,
+        18
+      ]
+    }
+  },
+  "pause_layout": {
+    "history_fraction": 0.6666667,
+    "menu_fraction": 0.3333333,
+    "history_order": "oldest_to_newest",
+    "show_separate_history_button": false,
+    "background_dimming_color": "#171817B8"
+  }
+}

@@ -97,17 +97,21 @@ style frame:
 
 screen say(who, what):
 
+    $ _theme_id = active_theme_id()
+
     window:
         id "window"
+        background theme_frame("dialogue_frame.png", theme_id=_theme_id, legacy="gui/textbox.png")
 
         if who is not None:
 
             window:
                 id "namebox"
                 style "namebox"
-                text who id "who"
+                background theme_frame("namebox_frame.png", theme_id=_theme_id, legacy="gui/namebox.png")
+                text who id "who" font theme_font("name", theme_id=_theme_id) color theme_color("heading_text", theme_id=_theme_id)
 
-        text what id "what"
+        text what id "what" font theme_font("body", theme_id=_theme_id) color theme_color("text", theme_id=_theme_id)
 
 
     ## If there's a side image, display it above the text. Do not display on the
@@ -140,7 +144,7 @@ style window:
 style namebox:
     xpos gui.name_xpos
     xanchor gui.name_xalign
-    xsize gui.namebox_width
+    xminimum gui.namebox_width
     ypos gui.name_ypos
     ysize gui.namebox_height
 
@@ -207,9 +211,17 @@ style input:
 screen choice(items):
     style_prefix "choice"
 
+    $ _theme_id = active_theme_id()
+
     vbox:
         for i in items:
-            textbutton i.caption action i.action
+            textbutton i.caption:
+                action i.action
+                idle_background theme_choice_idle(_theme_id)
+                hover_background theme_choice_hover(_theme_id)
+                text_font theme_font("body", theme_id=_theme_id)
+                text_color theme_color("text", theme_id=_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
 
 style choice_vbox is vbox
@@ -242,20 +254,21 @@ screen quick_menu():
 
     if quick_menu:
 
+        $ _theme_id = active_theme_id()
+
         hbox:
             style_prefix "quick"
 
             xalign 0.5
             yalign 1.0
 
-            textbutton _("Back") action Rollback()
-            textbutton _("History") action ShowMenu('history')
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Save") action ShowMenu('save')
-            textbutton _("Q.Save") action QuickSave()
-            textbutton _("Q.Load") action QuickLoad()
-            textbutton _("Prefs") action ShowMenu('preferences')
+            textbutton _("Back") action Rollback() text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True) text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Auto") action Preference("auto-forward", "toggle") text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Save") action ShowMenu('save') text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Q.Save") action QuickSave() text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Q.Load") action QuickLoad() text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
+            textbutton _("Prefs") action ShowMenu('preferences') text_color theme_color("muted", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id) text_font theme_font("body", theme_id=_theme_id)
 
 
 ## This code ensures that the quick_menu screen is displayed in-game, whenever
@@ -284,50 +297,151 @@ style quick_button_text:
 ## This screen is included in the main and game menus, and provides navigation
 ## to other menus, and to start the game.
 
-screen navigation():
+screen navigation(embedded=False, include_return=False):
+
+    $ _navigation_theme_id = active_theme_id(neutral_shell=main_menu)
 
     vbox:
+        id "themed_navigation_controls"
         style_prefix "navigation"
 
-        xpos gui.navigation_xpos
+        if embedded:
+            xalign 0.5
+        else:
+            xpos gui.navigation_xpos
         yalign 0.5
 
         spacing gui.navigation_spacing
 
         if main_menu:
-
-            textbutton _("Start") action Start()
+            textbutton "Новая история" action ShowMenu("story_builder")
+            textbutton "Продолжить" action Continue()
+            textbutton "Библиотека ассетов" action ShowMenu("asset_library")
 
         else:
+            textbutton _("Save"):
+                action ShowMenu("save")
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
-            textbutton _("History") action ShowMenu("history")
+        textbutton ("Загрузить" if main_menu else _("Load")):
+            action ShowMenu("load")
+            if not main_menu:
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
-            textbutton _("Save") action ShowMenu("save")
-
-        textbutton _("Load") action ShowMenu("load")
-
-        textbutton _("Preferences") action ShowMenu("preferences")
+        textbutton ("Настройки" if main_menu else _("Preferences")):
+            action ShowMenu("preferences")
+            if not main_menu:
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
         if _in_replay:
 
-            textbutton _("End Replay") action EndReplay(confirm=True)
+            textbutton _("End Replay"):
+                action EndReplay(confirm=True)
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
         elif not main_menu:
 
-            textbutton _("Main Menu") action MainMenu()
+            textbutton _("Main Menu"):
+                action MainMenu()
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
-        textbutton _("About") action ShowMenu("about")
+        textbutton ("О проекте" if main_menu else _("About")):
+            action ShowMenu("about")
+            if not main_menu:
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                selected_idle_background theme_button_hover(_navigation_theme_id)
+                selected_hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
         if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
 
             ## Help isn't necessary or relevant to mobile devices.
-            textbutton _("Help") action ShowMenu("help")
+            textbutton ("Помощь" if main_menu else _("Help")):
+                action ShowMenu("help")
+                if not main_menu:
+                    xsize 330
+                    text_xalign 0.5
+                    idle_background theme_button_idle(_navigation_theme_id)
+                    hover_background theme_button_hover(_navigation_theme_id)
+                    selected_idle_background theme_button_hover(_navigation_theme_id)
+                    selected_hover_background theme_button_hover(_navigation_theme_id)
+                    text_font theme_font("body", theme_id=_navigation_theme_id)
+                    text_color theme_color("text", theme_id=_navigation_theme_id)
+                    text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
         if renpy.variant("pc"):
 
             ## The quit button is banned on iOS and unnecessary on Android and
             ## Web.
-            textbutton _("Quit") action Quit(confirm=not main_menu)
+            textbutton ("Выход" if main_menu else _("Quit")):
+                action Quit(confirm=not main_menu)
+                if not main_menu:
+                    xsize 330
+                    text_xalign 0.5
+                    idle_background theme_button_idle(_navigation_theme_id)
+                    hover_background theme_button_hover(_navigation_theme_id)
+                    selected_idle_background theme_button_hover(_navigation_theme_id)
+                    selected_hover_background theme_button_hover(_navigation_theme_id)
+                    text_font theme_font("body", theme_id=_navigation_theme_id)
+                    text_color theme_color("text", theme_id=_navigation_theme_id)
+                    text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
+
+        if include_return:
+            textbutton _("Return"):
+                id "themed_navigation_return"
+                action Return()
+                xsize 330
+                text_xalign 0.5
+                idle_background theme_button_idle(_navigation_theme_id)
+                hover_background theme_button_hover(_navigation_theme_id)
+                text_font theme_font("body", theme_id=_navigation_theme_id)
+                text_color theme_color("text", theme_id=_navigation_theme_id)
+                text_hover_color theme_color("button_hover_text", theme_id=_navigation_theme_id)
 
 
 style navigation_button is gui_button
@@ -338,29 +452,41 @@ screen scene_provider_error(error):
     modal True
     zorder 200
 
-    add Solid("#000a")
+    $ _theme_id = active_theme_id(neutral_shell=main_menu)
+
+    add Solid(theme_color("veil", theme_id=_theme_id))
 
     frame:
+        id "themed_provider_panel"
         xalign 0.5
         yalign 0.5
-        xmaximum 900
-        padding (48, 36)
+        xsize 960
+        padding (90, 70)
+        background theme_frame("pause_menu_frame.png", theme_id=_theme_id, legacy="gui/frame.png")
 
         vbox:
-            spacing 20
+            xfill True
+            spacing 24
 
             text _("Scene unavailable"):
                 size 42
                 xalign 0.5
+                font theme_font("title", theme_id=_theme_id)
+                color theme_color("heading_text", theme_id=_theme_id)
 
             text error.code:
                 substitute False
                 xalign 0.5
+                font theme_font("name", theme_id=_theme_id)
+                color theme_color("muted", theme_id=_theme_id)
 
             text error.message:
                 substitute False
                 xalign 0.5
                 text_align 0.5
+                xmaximum 760
+                font theme_font("body", theme_id=_theme_id)
+                color theme_color("text", theme_id=_theme_id)
 
             hbox:
                 spacing 30
@@ -370,10 +496,28 @@ screen scene_provider_error(error):
                     id "retry"
                     action Return("retry")
                     sensitive error.retryable
+                    xminimum 280
+                    yminimum 64
+                    text_xalign 0.5
+                    idle_background theme_compact_button_idle(_theme_id)
+                    hover_background theme_compact_button_hover(_theme_id)
+                    insensitive_background theme_compact_button_idle(_theme_id)
+                    text_font theme_font("body", theme_id=_theme_id)
+                    text_color theme_color("text", theme_id=_theme_id)
+                    text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                    text_insensitive_color theme_color("muted", theme_id=_theme_id)
 
                 textbutton _("Main Menu"):
                     id "main_menu"
                     action Return("main_menu")
+                    xminimum 280
+                    yminimum 64
+                    text_xalign 0.5
+                    idle_background theme_compact_button_idle(_theme_id)
+                    hover_background theme_compact_button_hover(_theme_id)
+                    text_font theme_font("body", theme_id=_theme_id)
+                    text_color theme_color("text", theme_id=_theme_id)
+                    text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
 style navigation_button:
     size_group "navigation"
@@ -394,26 +538,49 @@ screen main_menu():
     ## This ensures that any other menu screen is replaced.
     tag menu
 
-    add gui.main_menu_background
+    add gui.main_menu_background fit "cover"
+    add Solid("#050B12A6")
+    add Solid("#071019B8") xsize 620
 
-    ## This empty frame darkens the main menu.
-    frame:
-        style "main_menu_frame"
+    vbox:
+        xpos 88
+        ypos 92
+        spacing 6
 
-    ## The use statement includes another screen inside this one. The actual
-    ## contents of the main menu are in the navigation screen.
-    use navigation
+        text "Слова создают миры":
+            xmaximum 510
+            size 66
+            line_spacing -8
+            font "gui/themes/fonts/pt_serif/PTSerif-Regular.ttf"
+            color "#F1ECE1"
 
-    if gui.show_name:
+        text "ИНТЕРАКТИВНЫЕ ИСТОРИИ БЕЗ ГРАНИЦ":
+            xmaximum 470
+            size 22
+            kerning 4
+            font theme_font("body", theme_id="default", neutral_shell=True)
+            color theme_color("muted", theme_id="default", neutral_shell=True)
 
-        vbox:
-            style "main_menu_vbox"
+    vbox:
+        xpos 86
+        ypos 390
+        spacing 8
 
-            text "[config.name!t]":
-                style "main_menu_title"
+        use ai_shell_button("Новая история", ShowMenu("story_builder"))
+        use ai_shell_button("Демо-история", Start("demo_story"))
+        use ai_shell_button("Продолжить", Continue())
+        use ai_shell_button("Загрузить", ShowMenu("load"))
+        use ai_shell_button("Библиотека ассетов", ShowMenu("asset_library"))
+        use ai_shell_button("Настройки", ShowMenu("preferences"))
+        use ai_shell_button("О проекте", ShowMenu("about"))
+        if renpy.variant("pc"):
+            use ai_shell_button("Выход", Quit(confirm=False))
 
-            text "[config.version]":
-                style "main_menu_version"
+    text "v[config.version]":
+        xpos 92
+        yalign 0.96
+        font theme_font("body", theme_id="default", neutral_shell=True)
+        color theme_color("muted", theme_id="default", neutral_shell=True)
 
 
 style main_menu_frame is empty
@@ -461,35 +628,67 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
     if main_menu:
         add gui.main_menu_background
     else:
-        add gui.game_menu_background
+        add Solid(theme_color("veil"))
 
     frame:
         style "game_menu_outer_frame"
+        background ("gui/overlay/game_menu.png" if main_menu else None)
 
         hbox:
 
             ## Reserve space for the navigation section.
             frame:
                 style "game_menu_navigation_frame"
+                id "themed_game_menu_navigation_card"
+                background (theme_frame("pause_menu_frame.png", legacy="gui/frame.png") if not main_menu else None)
+
+                if not main_menu:
+                    use navigation(embedded=True, include_return=True)
 
             frame:
                 style "game_menu_content_frame"
+                background (theme_frame("pause_history_frame.png", legacy="gui/frame.png") if not main_menu else None)
+                if not main_menu:
+                    padding (90, 72, 36, 36)
 
                 if scroll == "viewport":
 
-                    viewport:
-                        yinitial yinitial
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        pagekeys True
+                    if main_menu:
+                        viewport:
+                            yinitial yinitial
+                            scrollbars "vertical"
+                            mousewheel True
+                            draggable True
+                            pagekeys True
 
-                        side_yfill True
+                            side_yfill True
 
-                        vbox:
-                            spacing spacing
+                            vbox:
+                                spacing spacing
 
-                            transclude
+                                transclude
+                    else:
+                        side "c r":
+                            spacing 20
+
+                            viewport:
+                                id "themed_game_menu_viewport"
+                                yinitial yinitial
+                                mousewheel True
+                                draggable True
+                                pagekeys True
+
+                                vbox:
+                                    spacing spacing
+
+                                    transclude
+
+                            vbar:
+                                value YScrollValue("themed_game_menu_viewport")
+                                xsize 18
+                                base_bar theme_frame("scrollbar_track.png", legacy="gui/scrollbar/vertical_idle_bar.png")
+                                thumb theme_frame("scrollbar_thumb.png", legacy="gui/scrollbar/vertical_idle_thumb.png")
+                                unscrollable "hide"
 
                 elif scroll == "vpgrid":
 
@@ -512,17 +711,124 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
 
                     transclude
 
-    use navigation
+    if main_menu:
+        use navigation
 
-    textbutton _("Return"):
-        style "return_button"
+        textbutton _("Return"):
+            style "return_button"
+            action Return()
 
-        action Return()
-
-    label title
+    label title:
+        text_font theme_font("title", neutral_shell=main_menu)
+        text_color theme_color("overlay_text", neutral_shell=main_menu)
 
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
+
+
+## Pause menu #################################################################
+##
+## The pause layout is deliberately scene-agnostic: a uniform veil over the
+## current frame, chronological dialogue history on the left two thirds, and
+## out-of-story navigation on the right third.
+
+screen pause_menu():
+
+    tag menu
+    modal True
+    zorder 250
+
+    $ _theme_id = active_theme_id()
+
+    add Solid(theme_color("veil", theme_id=_theme_id))
+
+    hbox:
+        xfill True
+        yfill True
+
+        frame:
+            xsize int(config.screen_width * 2.0 / 3.0)
+            yfill True
+            padding (72, 54)
+            background theme_frame("pause_history_frame.png", theme_id=_theme_id, legacy="gui/frame.png")
+
+            vbox:
+                spacing 24
+
+                text _("History"):
+                    size gui.title_text_size
+                    font theme_font("title", theme_id=_theme_id)
+                    color theme_color("heading_text", theme_id=_theme_id)
+
+                side "c r":
+                    spacing 20
+
+                    viewport:
+                        id "pause_history_viewport"
+                        yinitial 1.0
+                        mousewheel True
+                        draggable True
+                        pagekeys True
+
+                        vbox:
+                            spacing gui.history_spacing
+
+                            for h in _history_list:
+                                vbox:
+                                    spacing 4
+                                    xfill True
+
+                                    if h.who:
+                                        text h.who:
+                                            substitute False
+                                            font theme_font("name", theme_id=_theme_id)
+                                            color theme_color("heading_text", theme_id=_theme_id)
+
+                                    $ pause_what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
+                                    text pause_what:
+                                        substitute False
+                                        font theme_font("history", theme_id=_theme_id)
+                                        color theme_color("text", theme_id=_theme_id)
+                                        xmaximum int(config.screen_width * 0.54)
+
+                            if not _history_list:
+                                text _("The dialogue history is empty."):
+                                    font theme_font("history", theme_id=_theme_id)
+                                    color theme_color("muted", theme_id=_theme_id)
+
+                    vbar:
+                        value YScrollValue("pause_history_viewport")
+                        xsize 18
+                        base_bar theme_frame("scrollbar_track.png", theme_id=_theme_id, legacy="gui/scrollbar/vertical_idle_bar.png")
+                        thumb theme_frame("scrollbar_thumb.png", theme_id=_theme_id, legacy="gui/scrollbar/vertical_idle_thumb.png")
+                        unscrollable "hide"
+
+        frame:
+            xfill True
+            yfill True
+            padding (64, 54)
+            background theme_frame("pause_menu_frame.png", theme_id=_theme_id, legacy="gui/frame.png")
+
+            vbox:
+                xfill True
+                yalign 0.5
+                spacing 24
+
+                text _("Paused"):
+                    xalign 0.5
+                    size gui.title_text_size
+                    font theme_font("title", theme_id=_theme_id)
+                    color theme_color("heading_text", theme_id=_theme_id)
+
+                textbutton _("Return") action Return() xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Save") action ShowMenu("save") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Load") action ShowMenu("load") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Preferences") action ShowMenu("preferences") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+
+                if not _in_replay:
+                    textbutton _("Main Menu") action MainMenu() xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+
+    key "game_menu" action Return()
 
 
 style game_menu_outer_frame is empty
@@ -640,6 +946,8 @@ screen load():
 
 screen file_slots(title):
 
+    $ _theme_id = active_theme_id(neutral_shell=main_menu)
+
     default page_name_value = FilePageNameInputValue(pattern=_("Page {}"), auto=_("Automatic saves"), quick=_("Quick saves"))
 
     use game_menu(title):
@@ -661,6 +969,8 @@ screen file_slots(title):
                 input:
                     style "page_label_text"
                     value page_name_value
+                    font theme_font("title", theme_id=_theme_id)
+                    color theme_color("heading_text", theme_id=_theme_id)
 
             ## The grid of file slots.
             grid gui.file_slot_cols gui.file_slot_rows:
@@ -668,6 +978,7 @@ screen file_slots(title):
 
                 xalign 0.5
                 yalign 0.5
+                yoffset -45
 
                 spacing gui.slot_spacing
 
@@ -677,6 +988,11 @@ screen file_slots(title):
 
                     button:
                         action FileAction(slot)
+                        ysize 270
+                        idle_background theme_button_idle(_theme_id)
+                        hover_background theme_button_hover(_theme_id)
+                        selected_idle_background theme_button_hover(_theme_id)
+                        selected_hover_background theme_button_hover(_theme_id)
 
                         has vbox
 
@@ -684,9 +1000,13 @@ screen file_slots(title):
 
                         text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
                             style "slot_time_text"
+                            font theme_font("body", theme_id=_theme_id)
+                            color theme_color("muted", theme_id=_theme_id)
 
                         text FileSaveName(slot):
                             style "slot_name_text"
+                            font theme_font("body", theme_id=_theme_id)
+                            color theme_color("text", theme_id=_theme_id)
 
                         key "save_delete" action FileDelete(slot)
 
@@ -696,26 +1016,81 @@ screen file_slots(title):
 
                 xalign 0.5
                 yalign 1.0
+                spacing 14
 
                 hbox:
                     xalign 0.5
 
                     spacing gui.page_spacing
 
-                    textbutton _("<") action FilePagePrevious()
+                    textbutton _("<"):
+                        action FilePagePrevious()
+                        xminimum 56
+                        yminimum 56
+                        text_xalign 0.5
+                        idle_background theme_compact_button_idle(_theme_id)
+                        hover_background theme_compact_button_hover(_theme_id)
+                        text_font theme_font("body", theme_id=_theme_id)
+                        text_color theme_color("text", theme_id=_theme_id)
+                        text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
                     key "save_page_prev" action FilePagePrevious()
 
                     if config.has_autosave:
-                        textbutton _("{#auto_page}A") action FilePage("auto")
+                        textbutton _("{#auto_page}A"):
+                            action FilePage("auto")
+                            xminimum 56
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
                     if config.has_quicksave:
-                        textbutton _("{#quick_page}Q") action FilePage("quick")
+                        textbutton _("{#quick_page}Q"):
+                            action FilePage("quick")
+                            xminimum 56
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
                     ## range(1, 10) gives the numbers from 1 to 9.
                     for page in range(1, 10):
-                        textbutton "[page]" action FilePage(page)
+                        textbutton "[page]":
+                            action FilePage(page)
+                            xminimum 56
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
-                    textbutton _(">") action FilePageNext()
+                    textbutton _(">"):
+                        action FilePageNext()
+                        xminimum 56
+                        yminimum 56
+                        text_xalign 0.5
+                        idle_background theme_compact_button_idle(_theme_id)
+                        hover_background theme_compact_button_hover(_theme_id)
+                        text_font theme_font("body", theme_id=_theme_id)
+                        text_color theme_color("text", theme_id=_theme_id)
+                        text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
                     key "save_page_next" action FilePageNext()
 
                 if config.has_sync:
@@ -723,10 +1098,30 @@ screen file_slots(title):
                         textbutton _("Upload Sync"):
                             action UploadSync()
                             xalign 0.5
+                            xminimum 280
+                            yminimum 58
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
                     else:
                         textbutton _("Download Sync"):
                             action DownloadSync()
                             xalign 0.5
+                            xminimum 280
+                            yminimum 58
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
 
 style page_label is gui_label
@@ -772,6 +1167,8 @@ screen preferences():
 
     tag menu
 
+    $ _theme_id = active_theme_id(neutral_shell=main_menu)
+
     use game_menu(_("Preferences"), scroll="viewport"):
 
         vbox:
@@ -779,20 +1176,118 @@ screen preferences():
             hbox:
                 box_wrap True
 
+                vbox:
+                    style_prefix "radio"
+                    label _("Interface Theme"):
+                        text_font theme_font("title", theme_id=_theme_id)
+                        text_color theme_color("heading_text", theme_id=_theme_id)
+                    for theme_option in THEME_PREFERENCE_IDS:
+                        $ theme_label = _("Automatic") if theme_option == "auto" else THEME_REGISTRY[theme_option]["label"]
+                        textbutton theme_label:
+                            action Function(set_theme_preference, theme_option)
+                            selected getattr(persistent, "ai_novel_theme_preference", "auto") == theme_option
+                            xminimum 300
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            foreground None
+                            selected_foreground None
+                            text_font theme_font("body", neutral_shell=main_menu)
+                            text_color theme_color("text", neutral_shell=main_menu)
+                            text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
+                            text_selected_color theme_color("button_hover_text", neutral_shell=main_menu)
+
                 if renpy.variant("pc") or renpy.variant("web"):
 
                     vbox:
                         style_prefix "radio"
-                        label _("Display")
-                        textbutton _("Window") action Preference("display", "window")
-                        textbutton _("Fullscreen") action Preference("display", "fullscreen")
+                        label _("Display"):
+                            text_font theme_font("title", theme_id=_theme_id)
+                            text_color theme_color("heading_text", theme_id=_theme_id)
+                        textbutton _("Window"):
+                            action Preference("display", "window")
+                            xminimum 260
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            foreground None
+                            selected_foreground None
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
+                        textbutton _("Fullscreen"):
+                            action Preference("display", "fullscreen")
+                            xminimum 260
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            foreground None
+                            selected_foreground None
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
                 vbox:
                     style_prefix "check"
-                    label _("Skip")
-                    textbutton _("Unseen Text") action Preference("skip", "toggle")
-                    textbutton _("After Choices") action Preference("after choices", "toggle")
-                    textbutton _("Transitions") action InvertSelected(Preference("transitions", "toggle"))
+                    label _("Skip"):
+                        text_font theme_font("title", theme_id=_theme_id)
+                        text_color theme_color("heading_text", theme_id=_theme_id)
+                    textbutton _("Unseen Text"):
+                        action Preference("skip", "toggle")
+                        xminimum 260
+                        yminimum 56
+                        text_xalign 0.5
+                        idle_background theme_compact_button_idle(_theme_id)
+                        hover_background theme_compact_button_hover(_theme_id)
+                        selected_idle_background theme_compact_button_hover(_theme_id)
+                        selected_hover_background theme_compact_button_hover(_theme_id)
+                        foreground None
+                        selected_foreground None
+                        text_font theme_font("body", theme_id=_theme_id)
+                        text_color theme_color("text", theme_id=_theme_id)
+                        text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                        text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
+                    textbutton _("After Choices"):
+                        action Preference("after choices", "toggle")
+                        xminimum 260
+                        yminimum 56
+                        text_xalign 0.5
+                        idle_background theme_compact_button_idle(_theme_id)
+                        hover_background theme_compact_button_hover(_theme_id)
+                        selected_idle_background theme_compact_button_hover(_theme_id)
+                        selected_hover_background theme_compact_button_hover(_theme_id)
+                        foreground None
+                        selected_foreground None
+                        text_font theme_font("body", theme_id=_theme_id)
+                        text_color theme_color("text", theme_id=_theme_id)
+                        text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                        text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
+                    textbutton _("Transitions"):
+                        action InvertSelected(Preference("transitions", "toggle"))
+                        xminimum 260
+                        yminimum 56
+                        text_xalign 0.5
+                        idle_background theme_compact_button_idle(_theme_id)
+                        hover_background theme_compact_button_hover(_theme_id)
+                        selected_idle_background theme_compact_button_hover(_theme_id)
+                        selected_hover_background theme_compact_button_hover(_theme_id)
+                        foreground None
+                        selected_foreground None
+                        text_font theme_font("body", theme_id=_theme_id)
+                        text_color theme_color("text", theme_id=_theme_id)
+                        text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                        text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
                 ## Additional vboxes of type "radio_pref" or "check_pref" can be
                 ## added here, to add additional creator-defined preferences.
@@ -805,41 +1300,89 @@ screen preferences():
 
                 vbox:
 
-                    label _("Text Speed")
+                    label _("Text Speed"):
+                        text_font theme_font("title", theme_id=_theme_id)
+                        text_color theme_color("heading_text", theme_id=_theme_id)
 
-                    bar value Preference("text speed")
+                    bar:
+                        value Preference("text speed")
+                        left_bar Solid(theme_color("accent", theme_id=_theme_id))
+                        right_bar Solid(theme_color("muted", theme_id=_theme_id))
+                        thumb Solid(theme_color("accent", theme_id=_theme_id))
 
-                    label _("Auto-Forward Time")
+                    label _("Auto-Forward Time"):
+                        text_font theme_font("title", theme_id=_theme_id)
+                        text_color theme_color("heading_text", theme_id=_theme_id)
 
-                    bar value Preference("auto-forward time")
+                    bar:
+                        value Preference("auto-forward time")
+                        left_bar Solid(theme_color("accent", theme_id=_theme_id))
+                        right_bar Solid(theme_color("muted", theme_id=_theme_id))
+                        thumb Solid(theme_color("accent", theme_id=_theme_id))
 
                 vbox:
 
                     if config.has_music:
-                        label _("Music Volume")
+                        label _("Music Volume"):
+                            text_font theme_font("title", theme_id=_theme_id)
+                            text_color theme_color("heading_text", theme_id=_theme_id)
 
                         hbox:
-                            bar value Preference("music volume")
+                            bar:
+                                value Preference("music volume")
+                                left_bar Solid(theme_color("accent", theme_id=_theme_id))
+                                right_bar Solid(theme_color("muted", theme_id=_theme_id))
+                                thumb Solid(theme_color("accent", theme_id=_theme_id))
 
                     if config.has_sound:
 
-                        label _("Sound Volume")
+                        label _("Sound Volume"):
+                            text_font theme_font("title", theme_id=_theme_id)
+                            text_color theme_color("heading_text", theme_id=_theme_id)
 
                         hbox:
-                            bar value Preference("sound volume")
+                            bar:
+                                value Preference("sound volume")
+                                left_bar Solid(theme_color("accent", theme_id=_theme_id))
+                                right_bar Solid(theme_color("muted", theme_id=_theme_id))
+                                thumb Solid(theme_color("accent", theme_id=_theme_id))
 
                             if config.sample_sound:
-                                textbutton _("Test") action Play("sound", config.sample_sound)
+                                textbutton _("Test"):
+                                    action Play("sound", config.sample_sound)
+                                    xminimum 120
+                                    yminimum 54
+                                    text_xalign 0.5
+                                    idle_background theme_compact_button_idle(_theme_id)
+                                    hover_background theme_compact_button_hover(_theme_id)
+                                    text_font theme_font("body", theme_id=_theme_id)
+                                    text_color theme_color("text", theme_id=_theme_id)
+                                    text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
 
                     if config.has_voice:
-                        label _("Voice Volume")
+                        label _("Voice Volume"):
+                            text_font theme_font("title", theme_id=_theme_id)
+                            text_color theme_color("heading_text", theme_id=_theme_id)
 
                         hbox:
-                            bar value Preference("voice volume")
+                            bar:
+                                value Preference("voice volume")
+                                left_bar Solid(theme_color("accent", theme_id=_theme_id))
+                                right_bar Solid(theme_color("muted", theme_id=_theme_id))
+                                thumb Solid(theme_color("accent", theme_id=_theme_id))
 
                             if config.sample_voice:
-                                textbutton _("Test") action Play("voice", config.sample_voice)
+                                textbutton _("Test"):
+                                    action Play("voice", config.sample_voice)
+                                    xminimum 120
+                                    yminimum 54
+                                    text_xalign 0.5
+                                    idle_background theme_compact_button_idle(_theme_id)
+                                    hover_background theme_compact_button_hover(_theme_id)
+                                    text_font theme_font("body", theme_id=_theme_id)
+                                    text_color theme_color("text", theme_id=_theme_id)
+                                    text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
                     if config.has_music or config.has_sound or config.has_voice:
                         null height gui.pref_spacing
@@ -847,6 +1390,19 @@ screen preferences():
                         textbutton _("Mute All"):
                             action Preference("all mute", "toggle")
                             style "mute_all_button"
+                            xminimum 260
+                            yminimum 56
+                            text_xalign 0.5
+                            idle_background theme_compact_button_idle(_theme_id)
+                            hover_background theme_compact_button_hover(_theme_id)
+                            selected_idle_background theme_compact_button_hover(_theme_id)
+                            selected_hover_background theme_compact_button_hover(_theme_id)
+                            foreground None
+                            selected_foreground None
+                            text_font theme_font("body", theme_id=_theme_id)
+                            text_color theme_color("text", theme_id=_theme_id)
+                            text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                            text_selected_color theme_color("button_hover_text", theme_id=_theme_id)
 
 
 style pref_label is gui_label
@@ -957,6 +1513,8 @@ screen history():
                     label h.who:
                         style "history_name"
                         substitute False
+                        text_font theme_font("name", neutral_shell=main_menu)
+                        text_color theme_color("heading_text", neutral_shell=main_menu)
 
                         ## Take the color of the who text from the Character, if
                         ## set.
@@ -966,6 +1524,8 @@ screen history():
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
                 text what:
                     substitute False
+                    font theme_font("history", neutral_shell=main_menu)
+                    color theme_color("text", neutral_shell=main_menu)
 
         if not _history_list:
             label _("The dialogue history is empty.")
@@ -1194,13 +1754,17 @@ screen confirm(message, yes_action, no_action):
     ## Ensure other screens do not get input while this screen is displayed.
     modal True
 
-    zorder 200
+    zorder 300
 
     style_prefix "confirm"
 
-    add "gui/overlay/confirm.png"
+    if main_menu:
+        add "gui/overlay/confirm.png"
+    else:
+        add Solid(theme_color("veil"))
 
     frame:
+        background theme_frame("pause_menu_frame.png", legacy="gui/confirm_frame.png", neutral_shell=main_menu)
 
         vbox:
             xalign .5
@@ -1210,13 +1774,15 @@ screen confirm(message, yes_action, no_action):
             label _(message):
                 style "confirm_prompt"
                 xalign 0.5
+                text_font theme_font("title", neutral_shell=main_menu)
+                text_color theme_color("heading_text", neutral_shell=main_menu)
 
             hbox:
                 xalign 0.5
                 spacing 150
 
-                textbutton _("Yes") action yes_action
-                textbutton _("No") action no_action
+                textbutton _("Yes") id "confirm_yes" action yes_action xsize 240 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
+                textbutton _("No") id "confirm_no" action no_action xsize 240 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
 
     ## Right-click and escape answer "no".
     key "game_menu" action no_action
@@ -1565,16 +2131,19 @@ screen quick_menu():
 
     if quick_menu:
 
+        $ _theme_id = active_theme_id()
+
         hbox:
             style_prefix "quick"
 
             xalign 0.5
             yalign 1.0
+            spacing 12
 
-            textbutton _("Back") action Rollback()
-            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True)
-            textbutton _("Auto") action Preference("auto-forward", "toggle")
-            textbutton _("Menu") action ShowMenu()
+            textbutton _("Back") action Rollback() xminimum 210 yminimum 82 text_xalign 0.5 idle_background theme_touch_button_idle(_theme_id) hover_background theme_touch_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+            textbutton _("Skip") action Skip() alternate Skip(fast=True, confirm=True) xminimum 210 yminimum 82 text_xalign 0.5 idle_background theme_touch_button_idle(_theme_id) hover_background theme_touch_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+            textbutton _("Auto") action Preference("auto-forward", "toggle") xminimum 210 yminimum 82 text_xalign 0.5 idle_background theme_touch_button_idle(_theme_id) hover_background theme_touch_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+            textbutton _("Menu") action config.game_menu_action xminimum 210 yminimum 82 text_xalign 0.5 idle_background theme_touch_button_idle(_theme_id) hover_background theme_touch_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
 
 style window:

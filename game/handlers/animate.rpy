@@ -19,10 +19,14 @@ init python:
         offset = effect.get("xoffset", 10)
         duration = effect.get("duration", 0.05)
         repetitions = effect.get("repeat", 1)
-        renpy.show(
-            target,
-            at_list=[json_shake(offset=offset, duration=duration, repetitions=repetitions)],
+        tag = target.split()[0]
+        previous_transforms = list(
+            renpy.game.context().scene_lists.at_list.get("master", {}).get(tag, [])
         )
+        previous_transforms.append(
+            json_shake(offset=offset, duration=duration, repetitions=repetitions)
+        )
+        renpy.show(target, at_list=previous_transforms)
         return PlaybackActionResult.continue_()
 
     register_act_handler("animate", handle_animate)

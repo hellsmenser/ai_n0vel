@@ -1,7 +1,6 @@
 ﻿label start:
     scene bg_tavern_interior
-    "Запуск. Формирую очередь сцен..."
-    $ scene_client_start()
+    $ scene_client_start_production()
     jump play_next_scene
 
 label play_next_scene:
@@ -13,7 +12,6 @@ label play_next_scene:
         call screen wait_task(None, "Генерирую следующую сцену...")
         jump play_next_scene
     $ next_id = provider_poll.scene_ref
-    "Проигрываю сцену"
     jump play_prepared_scene
 
 label play_prepared_scene:
@@ -54,5 +52,4 @@ label scene_provider_error_flow:
 
 label next_scene:
     with dissolve
-    "Это следующая сцена."
     jump play_next_scene

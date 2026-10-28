@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "scene_id": "demo_after_bell_01",
+  "name": "Пустой коридор",
+  "characters": {
+    "akari": "Акари",
+    "ren": "Рэн"
+  },
+  "ui": {
+    "theme_id": "literary",
+    "palette_id": "sepia",
+    "font_pack_id": "literary_serif"
+  },
+  "dialogue": [
+    {"type": "scene", "target": "bg academy corridor evening"},
+    {"type": "transition", "effect": "dissolve"},
+    {"type": "show", "target": "akari school open", "transform": {"slot": "left", "yalign": 1.0}},
+    {"type": "show", "target": "ren school neutral", "transform": {"slot": "right", "yalign": 1.0, "flip": true}},
+    {"type": "line", "speaker": "akari", "text": "Рэн! Ты тоже слышал этот сигнал после звонка?"},
+    {"type": "line", "speaker": "ren", "text": "Три коротких импульса. И каждый раз они идут со стороны крыши."},
+    {"type": "pause", "duration": 0.25},
+    {"type": "line", "speaker": "akari", "text": "Значит, мне не показалось. Проверим, пока охрана не закрыла лестницу?"},
+    {"type": "show", "target": "ren school open", "transform": {"slot": "right", "yalign": 1.0, "flip": true}},
+    {"type": "line", "speaker": "ren", "text": "Идём. Но если это твой радиокружок — объясняться будешь сама."},
+    {"type": "return"}
+  ]
+}

@@ -3,6 +3,7 @@ init python:
     import hashlib
     import json
     import math
+    import re
 
     SCENE_SCHEMA_VERSION = 1
     # Limits keep untrusted AI output bounded before semantic validation.
@@ -13,6 +14,7 @@ init python:
     MAX_CHARACTERS = 64
     MAX_GENERIC_STRING_LENGTH = 4096
     MAX_IDENTIFIER_LENGTH = 256
+    MAX_UI_IDENTIFIER_LENGTH = 64
     MAX_LINE_TEXT_LENGTH = 4000
     PRODUCTION_JSON_JUMP_TARGETS = set(["next_scene"])
     TEST_JSON_JUMP_TARGETS = set([
@@ -20,7 +22,10 @@ init python:
         "stage1_contract_jump_target",
         "stage2_jump_control_target",
     ])
-    _ROOT_FIELDS = set(["schema_version", "scene_id", "characters", "dialogue", "name", "metadata"])
+    _ROOT_FIELDS = set(["schema_version", "scene_id", "characters", "dialogue", "name", "metadata", "ui"])
+    _UI_FIELDS = set(["theme_id", "palette_id", "font_pack_id"])
+    _UI_IDENTIFIER_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$")
+    _CHARACTER_SLOTS = set(["far_left", "left", "center", "right", "far_right"])
     _ACTION_FIELDS = {
         "scene": set(["type", "target", "metadata"]),
         "show": set(["type", "target", "transform", "metadata"]),
@@ -94,6 +99,20 @@ init python:
     def _validate_metadata(value, path):
         _expect(isinstance(value, builtins.dict), path, "metadata must be an object")
 
+    def _validate_ui(value, path="ui"):
+        _expect(isinstance(value, builtins.dict), path, "ui must be an object")
+        unknown = set(value.keys()) - _UI_FIELDS
+        if unknown:
+            raise _ContractViolation(path + "." + sorted(unknown)[0], "unknown ui field")
+        for field, identifier in value.items():
+            _expect(
+                isinstance(identifier, str)
+                and len(identifier) <= MAX_UI_IDENTIFIER_LENGTH
+                and _UI_IDENTIFIER_PATTERN.fullmatch(identifier) is not None,
+                path + "." + field,
+                field + " must be a lowercase bounded identifier",
+            )
+
     def _require_image(target, path):
         _expect(isinstance(target, str) and 0 < len(target) <= MAX_IDENTIFIER_LENGTH, path, "target must be a non-empty bounded string")
         if not renpy.has_image(target, exact=True):
@@ -121,10 +140,15 @@ init python:
             if "transform" in action:
                 transform = action["transform"]
                 _expect(isinstance(transform, builtins.dict), path + ".transform", "transform must be an object")
-                allowed = set(["xalign", "yalign", "alpha", "flip"])
+                allowed = set(["slot", "xalign", "yalign", "alpha", "flip"])
                 unknown_transform = set(transform.keys()) - allowed
                 if unknown_transform:
                     raise _ContractViolation(path + ".transform." + sorted(unknown_transform)[0], "unknown transform field")
+                _expect(not ("slot" in transform and "xalign" in transform),
+                        path + ".transform", "slot and xalign are mutually exclusive")
+                if "slot" in transform:
+                    _expect(isinstance(transform["slot"], str) and transform["slot"] in _CHARACTER_SLOTS,
+                            path + ".transform.slot", "slot must be a supported character slot")
                 for field in ("xalign", "yalign", "alpha"):
                     if field in transform:
                         _expect(_is_number(transform[field]), path + ".transform." + field, field + " must be finite numeric")
@@ -172,7 +196,7 @@ init python:
 
     def _migrate_v0(raw, expected_scene_id):
         _expect(isinstance(raw, builtins.dict), "$", "root must be an object")
-        allowed = set(["id", "scene", "characters", "dialogue", "name", "metadata", "test_probe"])
+        allowed = set(["id", "scene", "characters", "dialogue", "name", "metadata", "ui", "test_probe"])
         unknown = set(raw.keys()) - allowed
         if unknown:
             raise _ContractViolation("$." + sorted(unknown)[0], "unknown v0 root field")
@@ -190,6 +214,8 @@ init python:
         }
         if "name" in raw:
             migrated["name"] = raw["name"]
+        if "ui" in raw:
+            migrated["ui"] = copy.deepcopy(raw["ui"])
         metadata = copy.deepcopy(raw.get("metadata", {}))
         if "test_probe" in raw:
             metadata["test_probe"] = raw["test_probe"]
@@ -235,6 +261,8 @@ init python:
             _expect(isinstance(snapshot["name"], str), "name", "name must be a string")
         if "metadata" in snapshot:
             _validate_metadata(snapshot["metadata"], "metadata")
+        if "ui" in snapshot:
+            _validate_ui(snapshot["ui"])
         for index, action in enumerate(snapshot["dialogue"]):
             _validate_action(action, index, snapshot["characters"])
 

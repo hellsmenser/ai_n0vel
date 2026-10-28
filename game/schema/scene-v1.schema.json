@@ -11,15 +11,26 @@
     "scene_id": {"type": "string", "minLength": 1, "maxLength": 256},
     "name": {"type": "string", "maxLength": 4096},
     "metadata": {"type": "object"},
+    "ui": {"$ref": "#/$defs/ui"},
     "characters": {"type": "object", "maxProperties": 64, "propertyNames": {"minLength": 1, "maxLength": 256}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 256}},
     "dialogue": {"type": "array", "maxItems": 500, "items": {"$ref": "#/$defs/action"}}
   },
   "$defs": {
     "metadata": {"type": "object"},
+    "uiIdentifier": {"type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$"},
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "theme_id": {"$ref": "#/$defs/uiIdentifier"},
+        "palette_id": {"$ref": "#/$defs/uiIdentifier"},
+        "font_pack_id": {"$ref": "#/$defs/uiIdentifier"}
+      }
+    },
     "action": {
       "oneOf": [
         {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "scene"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "metadata": {"$ref": "#/$defs/metadata"}}},
-        {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "show"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "transform": {"type": "object", "additionalProperties": false, "properties": {"xalign": {"type": "number"}, "yalign": {"type": "number"}, "alpha": {"type": "number"}, "flip": {"type": "boolean"}}}, "metadata": {"$ref": "#/$defs/metadata"}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "target"], "properties": {"type": {"const": "show"}, "target": {"type": "string", "minLength": 1, "maxLength": 256}, "transform": {"type": "object", "additionalProperties": false, "not": {"required": ["slot", "xalign"]}, "properties": {"slot": {"enum": ["far_left", "left", "center", "right", "far_right"]}, "xalign": {"type": "number"}, "yalign": {"type": "number"}, "alpha": {"type": "number"}, "flip": {"type": "boolean"}}}, "metadata": {"$ref": "#/$defs/metadata"}}},
         {"type": "object", "additionalProperties": false, "required": ["type", "speaker", "text"], "properties": {"type": {"const": "line"}, "speaker": {"type": "string", "minLength": 1, "maxLength": 256}, "text": {"type": "string", "maxLength": 4000}, "metadata": {"$ref": "#/$defs/metadata"}}},
         {"type": "object", "additionalProperties": false, "required": ["type", "duration"], "properties": {"type": {"const": "pause"}, "duration": {"type": "number", "minimum": 0, "maximum": 60}, "metadata": {"$ref": "#/$defs/metadata"}}},
         {"type": "object", "additionalProperties": false, "required": ["type", "effect"], "properties": {"type": {"const": "transition"}, "effect": {"enum": ["fade", "dissolve"]}, "metadata": {"$ref": "#/$defs/metadata"}}},

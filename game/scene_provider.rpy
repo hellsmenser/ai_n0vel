@@ -97,12 +97,13 @@ init -40 python:
 
     class SceneProviderResult(object):
         def __init__(self, kind, session=None, error=None, scene_ref=None,
-                     playback_state=None):
+                     playback_state=None, story_metadata=None):
             self.kind = str(kind)
             self.session = session
             self.error = error
             self.scene_ref = None if scene_ref is None else str(scene_ref)
             self.playback_state = playback_state
+            self.story_metadata = story_metadata
 
     def _provider_error_from_playback(error, operation="prepare", task_id=None,
                                       retryable=True):
@@ -303,6 +304,12 @@ init -40 python:
         """Discard live clients; saved state contains only inert session data."""
         _set_scene_provider_runtime(None)
         session_error = verify_scene_client_state(scene_session, renpy.store.playback_state)
+        if (session_error is None
+                and scene_session.provider_kind == "demo_story"
+                and scene_session.provider_cursor > 0):
+            metadata_error = verify_story_metadata(renpy.store.story_metadata)
+            if metadata_error is not None:
+                session_error = "story metadata is incompatible: " + metadata_error.message
         if session_error is not None:
             error = SceneProviderError(
                 "session_integrity_error",
@@ -327,6 +334,13 @@ init -40 python:
         _set_scene_provider_runtime(None)
         renpy.store.scene_session = SceneSessionState(provider_kind=provider_kind)
         renpy.store.scene_client_error = None
+        renpy.store.story_metadata = None
+
+    def scene_client_start_production():
+        """Start the normal task provider without inheriting a demo session."""
+        renpy.store.scene_session = SceneSessionState(provider_kind="mongo_file")
+        scene_client_start()
+        return renpy.store.scene_session
 
     def _scene_client_fail(error, operation=None, scene_ref=None):
         if not isinstance(error, SceneProviderError):
@@ -380,6 +394,29 @@ init -40 python:
             ))
         if result.kind == "error":
             return _scene_client_fail(result.error, scene_ref=result.scene_ref)
+        if result.kind == "metadata":
+            try:
+                trusted_metadata = apply_story_metadata(result.story_metadata)
+            except StoryMetadataError as error:
+                return _scene_client_fail(SceneProviderError(
+                    "story_metadata_invalid",
+                    "poll",
+                    error.message,
+                    retryable=False,
+                    path=error.path,
+                    source="story_metadata",
+                ))
+            renpy.store.scene_client_error = None
+            renpy.store.scene_session = result_session.replaced(
+                phase="waiting",
+                pending_operation="poll",
+                active_ref=None,
+            )
+            return SceneProviderResult(
+                "waiting",
+                session=renpy.store.scene_session,
+                story_metadata=trusted_metadata,
+            )
         if result.kind == "waiting":
             renpy.store.scene_client_error = None
             renpy.store.scene_session = result_session.replaced(

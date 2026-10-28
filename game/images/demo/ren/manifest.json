@@ -1,0 +1,61 @@
+{
+  "version": 8,
+  "canvas": [
+    1024,
+    1536
+  ],
+  "render_mode": "whole_sprite",
+  "layer_order": [
+    "sprite"
+  ],
+  "poses": [
+    {
+      "id": "neutral",
+      "title": "\u041d\u0435\u0439\u0442\u0440\u0430\u043b\u044c\u043d\u0430\u044f",
+      "file": "01_neutral.png"
+    },
+    {
+      "id": "open",
+      "title": "\u041e\u0442\u043a\u0440\u044b\u0442\u0430\u044f",
+      "file": "02_open.png"
+    },
+    {
+      "id": "concerned",
+      "title": "\u041d\u0430\u0441\u0442\u043e\u0440\u043e\u0436\u0435\u043d\u043d\u0430\u044f",
+      "file": "03_concerned.png"
+    }
+  ],
+  "outfits": [
+    {
+      "id": "school",
+      "title": "\u0410\u043a\u0430\u0434\u0435\u043c\u0438\u044f",
+      "directory": "school"
+    }
+  ],
+  "sprites": {
+    "school/01_neutral.png": {
+      "sprite_id": "school/01_neutral.png",
+      "sprite": "images/demo/ren/01_neutral.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/02_open.png": {
+      "sprite_id": "school/02_open.png",
+      "sprite": "images/demo/ren/02_open.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    },
+    "school/03_concerned.png": {
+      "sprite_id": "school/03_concerned.png",
+      "sprite": "images/demo/ren/03_concerned.png",
+      "root_anchor": [
+        512,
+        1500
+      ]
+    }
+  }
+}

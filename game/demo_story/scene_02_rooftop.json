@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "scene_id": "demo_after_bell_02",
+  "name": "Сигнал на крыше",
+  "characters": {
+    "akari": "Акари",
+    "ren": "Рэн"
+  },
+  "ui": {
+    "theme_id": "literary",
+    "palette_id": "sepia",
+    "font_pack_id": "literary_serif"
+  },
+  "dialogue": [
+    {"type": "scene", "target": "bg academy rooftop blue hour"},
+    {"type": "transition", "effect": "fade"},
+    {"type": "show", "target": "akari school neutral", "transform": {"slot": "left", "yalign": 1.0}},
+    {"type": "show", "target": "ren school concerned", "transform": {"slot": "right", "yalign": 1.0, "flip": true}},
+    {"type": "line", "speaker": "akari", "text": "Вон у вентиляции. Маленький передатчик — и лампа всё ещё мигает."},
+    {"type": "line", "speaker": "ren", "text": "Не трогай. Корпус тёплый, хотя питание к нему не подведено."},
+    {"type": "animate", "target": "ren school concerned", "effect": {"type": "shake", "xoffset": 12, "duration": 0.06, "repeat": 2}},
+    {"type": "pause", "duration": 0.35},
+    {"type": "line", "speaker": "akari", "text": "Он снова передал три импульса. Будто отвечает нам."},
+    {"type": "show", "target": "akari school open", "transform": {"slot": "left", "yalign": 1.0}},
+    {"type": "line", "speaker": "ren", "text": "Тогда запишем частоту и вернёмся завтра. Уже подготовленными."},
+    {"type": "return"}
+  ]
+}

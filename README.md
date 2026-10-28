@@ -11,6 +11,9 @@
 - `game/playback_metadata.rpy` — поддерживаемые Ren'Py callbacks для History, save-slot metadata и проверки состояния после load.
 - `game/scene_provider.rpy` — сохраняемая session state и несохраняемый runtime provider, структурированные ошибки, retry/ack и стабильная autosave-граница.
 - `game/scene_queue.rpy` — bounded-очередь префетча N сцен и идемпотентный `done → consumed`; `wait_task` даёт interaction boundary между короткими poll.
+- `game/theme_system.rpy` — реестр семи тем, Auto/override/fallback, palette tint, font packs и helpers для themed displayables.
+- `game/gui/themes/` — одинаковый набор 9-slice PNG, manifests и четыре OFL font families с кириллицей.
+- `game/screens.rpy` — gameplay/game-menu surfaces и pause layout: History 2/3 + меню 1/3 без отдельной кнопки History.
 - `game/handlers/` — act-хендлеры (обработка шагов диалога). Реестр в `registry.rpy`.
 - `game/images.rpy` — объявления спрайтов.
 - `game/scenes/scene_<task_id>.json` — файлы сцен (название по `_id` задачи Mongo).
@@ -33,9 +36,11 @@
   "schema_version": 1,
   "scene_id": "0123456789abcdef01234567",
   "characters": { "lira": "Лира", "kael": "Каэль" },
+  "ui": { "theme_id": "literary", "palette_id": "sepia", "font_pack_id": "literary_serif" },
   "dialogue": [
     { "type": "scene", "target": "bg_tavern_interior" },
-    { "type": "show", "target": "lira neutral" },
+    { "type": "show", "target": "lira neutral", "transform": { "slot": "left" } },
+    { "type": "show", "target": "kael serious", "transform": { "slot": "right", "flip": true } },
     { "type": "line", "speaker": "lira", "text": "Привет!" },
     { "type": "animate", "target": "lira neutral", "effect": { "type": "shake", "repeat": 3 } },
     { "type": "pause", "duration": 0.5 },
@@ -44,6 +49,12 @@
   ]
 }
 ```
+
+Поле `ui` необязательно. При его отсутствии используется default-тема; в режиме `Auto` установленные рекомендации применяются, а неизвестные корректно записанные ID безопасно откатываются к default. Явный выбор пользователя в Preferences имеет приоритет. Main-menu shell всегда остаётся нейтральным.
+
+Для размещения персонажей `show.transform.slot` принимает `far_left`, `left`, `center`, `right` или `far_right`; `flip: true` зеркалит спрайт. `slot` нельзя передавать одновременно с legacy-полем `xalign`, при этом старые сцены с `xalign`, `yalign`, `alpha` и `flip` остаются совместимыми.
+
+Доступные theme IDs: `default`, `modern_muted`, `literary`, `romantic`, `lovecraft_biopunk`, `high_fantasy`, `science_fiction`. У default есть варианты `default`, `graphite_sage`, `warm_parchment`, `muted_blue`, `subdued_plum`. Графические элементы не содержат текста; default palette variants используют runtime tint и не дублируют PNG.
 
 ## Act-хендлеры
 Каждый элемент `dialogue[]` имеет поле `type`, для которого существует обработчик `handle_<type>(step, chars) -> PlaybackActionResult`.
@@ -101,12 +112,23 @@ JSON:
 image lira happy = "images/lira/lira happy.webp"
 ```
 
+Экспериментальная Акари проверяет следующий уровень каталога: один персонаж
+имеет независимые локальные настройки позы и одежды. Библиотека показывает
+21 цельный прозрачный спрайт с родной головой (`3 костюма × 7 поз`), поэтому
+геометрия шеи, воротника, рук и волос не собирается из несовместимых генераций.
+Для каждого спрайта manifest хранит вычисленный по реальной линии опоры
+`root_anchor` и `sprite_offset`; смещённая поза не обязана использовать общий
+центр. Отдельная смена выражения отложена до появления согласованного
+полноспрайтового набора.
+Настройки сохраняются в существующем persistent-формате с безопасными
+значениями по умолчанию; старые плоские `variants` остаются совместимыми.
+
 ## Отладка
 - Отсутствующий хендлер: лог `[play_json_scene] Нет хендлера для act='...'`.
 - Пустой реестр: `[play_json_scene] Реестр хендлеров пуст`.
 - Очередь: префикс `[queue]` в логе.
 
-## Автоматическая проверка Stage 0–4
+## Автоматическая проверка Stage 0–5
 
 Из каталога `Novel` полный baseline запускается так:
 
@@ -114,17 +136,19 @@ image lira happy = "images/lira/lira happy.webp"
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\run_stage0_baseline.ps1
 ```
 
-Runner использует `F:\renpy\renpy-8.3.4-sdk` по умолчанию, синтаксически разбирает fixtures, запускает lint и native testcases в отдельных процессах и отдельных savedir. Saves и diagnostics пишутся только в игнорируемый каталог `test-artifacts`; итог находится в `test-artifacts/stage0/stage0-results.json`.
+Runner использует `F:\renpy\renpy-8.3.4-sdk` по умолчанию, синтаксически разбирает fixtures, запускает lint и native testcases в отдельных процессах и отдельных savedir. Saves и diagnostics пишутся только в игнорируемый каталог `test-artifacts`; итог находится в `test-artifacts/stage0/stage0-results.json`. Не запускайте два native runner одновременно: Ren'Py persistent остаётся общим файлом и на Windows может дать `WinError 32`.
 
 Обычный case получает `PASS` только при exit code 0 и отсутствии свежих `traceback.txt`/`errors.txt`; это важно, потому что Ren'Py 8.3.4 может вернуть 0 после игрового исключения. Матрица покрывает контракт, handlers, пошаговый cursor, save/load, rollback 1/3/10, History, save metadata, hard checkpoint паузы, очередь, provider errors/retry и настоящую autosave-load boundary.
 
-Последний полный прогон 2026-10-19: JSON fixtures `37/37`, lint `PASS`, native testcases `62/62`, `overall_passed=true`, свежих error diagnostics нет. При закрытом MongoDB port offline-сценарии показали управляемый `provider_offline` за 5,762 и 5,879 секунды.
+Последний полный одиночный прогон 2026-10-24: JSON fixtures `37/37`, lint `PASS`, native testcases `101/101`, `overall_passed=true`, свежих error diagnostics нет. В матрицу входят regression-сценарии всех мутаций story builder/asset library, валидного и невалидного запуска истории, сохранения focus через screen rebuild, mouse caret и переходов Up/Down по перенесённым и пустым строкам. Отдельный `tools/run_gui_visual_matrix.ps1` подтверждает small/touch варианты главного меню, story builder и asset library.
+
+Проверка текущего GUI/demo-среза 2026-10-29: Ren'Py lint `PASS`, small/touch visual matrix `PASS`, новые theme, product-GUI, demo и character-slot cases проходят в изолированных savedir; Python-suite orchestrator — `30/30`. Один cumulative запуск завис на `demo_story_history_visual`, после чего тот же case прошёл изолированно без свежих diagnostics. Полный baseline текущего worktree не заявляется зелёным: 38 отслеживаемых `game/test_fixtures/*` удалены локально и не входят в этот коммит; без решения об их восстановлении runner не может воспроизвести исторический `101/101`.
 
 `PlaybackState.state_version == 2` — текущая совместимая версия save-state. Старые или повреждённые состояния не мигрируются неявно: после load они fail-closed переводятся в структурированную ошибку до вызова handler.
 
 ## Документация проекта
 
-- [План завершения Ren'Py-клиента](docs/renpy-client-completion-plan.md) — этапы, критерии готовности и оставшаяся работа над GUI.
+- [План завершения Ren'Py-клиента](docs/renpy-client-completion-plan.md) — этапы, критерии готовности и оставшаяся ручная приёмка GUI.
 - [Журнал решений](docs/decision-log.md) — архитектурные решения, альтернативы, компромиссы и подтверждающие тесты для пояснительной записки.
 
 ## Требования окружения

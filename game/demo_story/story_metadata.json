@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "story_id": "demo_after_bell",
+  "title": "После звонка",
+  "synopsis": "Акари и Рэн остаются в школе после уроков и идут на крышу, чтобы проверить странный повторяющийся сигнал.",
+  "cast": [
+    {
+      "character_id": "akari",
+      "display_name": "Акари",
+      "asset_id": "akari"
+    },
+    {
+      "character_id": "ren",
+      "display_name": "Рэн",
+      "asset_id": "ren"
+    }
+  ],
+  "ui": {
+    "theme_id": "literary",
+    "palette_id": "sepia",
+    "font_pack_id": "literary_serif"
+  }
+}
