@@ -33,10 +33,26 @@ init python:
         for key, name in state.snapshot.get("characters", {}).items():
             chars[key] = Character(
                 escape_dynamic_text(name),
-                color="#c8ffc8" if key == "lira" else "#c8e0ff",
-                who_color="#c0c0ff",
+                who_color=speaker_name_color(key),
             )
         return chars
+
+    def current_speaker_identity(display_name=None):
+        """Prefer the stable scene speaker id while a dynamic line is visible."""
+        state = getattr(renpy.store, "playback_state", None)
+        if isinstance(state, PlaybackState) and state.phase == "playing":
+            action = state.current_action()
+            if isinstance(action, dict) and action.get("type") == "line":
+                speaker_id = action.get("speaker")
+                if isinstance(speaker_id, str) and speaker_id:
+                    return speaker_id
+        return display_name or "narrator"
+
+    def history_speaker_identity(history_entry):
+        speaker_id = getattr(history_entry, "speaker_id", None)
+        if isinstance(speaker_id, str) and speaker_id:
+            return speaker_id
+        return getattr(history_entry, "who", None) or "narrator"
 
     def execute_current_playback_action(state):
         """Execute exactly the current action and return explicit control.

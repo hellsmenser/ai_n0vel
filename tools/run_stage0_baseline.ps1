@@ -43,7 +43,7 @@ function Copy-FreshDiagnostics([datetime]$CaseStartUtc, [string]$CaseArtifactDir
     return $copied
 }
 
-function Invoke-RenPyProcess([string]$Name, [string[]]$RenpyArguments, [int]$TimeoutSeconds = 0) {
+function Invoke-RenPyProcess([string]$Name, [string[]]$RenpyArguments, [int]$TimeoutSeconds = 0, [string]$ExecutablePath = $pythonExe) {
     if ($TimeoutSeconds -le 0) {
         $TimeoutSeconds = $CaseTimeoutSeconds
     }
@@ -67,7 +67,7 @@ function Invoke-RenPyProcess([string]$Name, [string[]]$RenpyArguments, [int]$Tim
     $startedUtc = (Get-Date).ToUniversalTime()
     $timer = [System.Diagnostics.Stopwatch]::StartNew()
     $argumentLine = (($RenpyArguments | ForEach-Object { Quote-ProcessArgument $_ }) -join ' ')
-    $process = Start-Process -FilePath $pythonExe -ArgumentList $argumentLine -PassThru -WindowStyle Hidden `
+    $process = Start-Process -FilePath $ExecutablePath -ArgumentList $argumentLine -PassThru -WindowStyle Hidden `
         -RedirectStandardOutput $stdoutPath -RedirectStandardError $stderrPath
 
     $finished = $process.WaitForExit($TimeoutSeconds * 1000)
@@ -137,6 +137,7 @@ $summary = [ordered]@{
     case_timeout_seconds = $CaseTimeoutSeconds
     mongo_port_open = $false
     json_validation = @()
+    theme_asset_unittest = $null
     lint = $null
     cases = @()
     overall_passed = $false
@@ -156,6 +157,36 @@ foreach ($fixture in $fixtureFiles) {
     }
     $summary.json_validation += [pscustomobject]$fixtureResult
 }
+
+$themeAssetTestPath = Join-Path $repoRoot 'tools\test_generate_theme_assets.py'
+$systemPythonCommand = Get-Command python -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($null -eq $systemPythonCommand) {
+    $themeAssetTestPassed = $false
+    $summary.theme_asset_unittest = [ordered]@{
+        expected = 'exit 0'
+        exit_code = $null
+        duration_seconds = 0
+        classification = 'FAIL'
+        fresh_error_diagnostics = @()
+        artifact_paths = @()
+        error = 'A standard Python interpreter with unittest was not found on PATH.'
+    }
+}
+else {
+    $themeAssetTestProcess = Invoke-RenPyProcess -Name 'theme_asset_generator_unittest' -RenpyArguments @($themeAssetTestPath) -ExecutablePath $systemPythonCommand.Source
+    $themeAssetErrorDiagnostics = @(Get-FreshErrorDiagnostics $themeAssetTestProcess)
+    $themeAssetTestPassed = (-not $themeAssetTestProcess.TimedOut) -and ($themeAssetTestProcess.ExitCode -eq 0) -and ($themeAssetErrorDiagnostics.Count -eq 0)
+    $summary.theme_asset_unittest = [ordered]@{
+        expected = 'exit 0'
+        exit_code = $themeAssetTestProcess.ExitCode
+        duration_seconds = $themeAssetTestProcess.DurationSeconds
+        classification = if ($themeAssetTestPassed) { 'PASS' } else { 'FAIL' }
+        fresh_error_diagnostics = $themeAssetErrorDiagnostics
+        artifact_paths = @($themeAssetTestProcess.StdoutPath, $themeAssetTestProcess.StderrPath) + $themeAssetTestProcess.DiagnosticPaths
+        error = $null
+    }
+}
+if (-not $themeAssetTestPassed) { $allPassed = $false }
 
 $lintSaveDir = Join-Path $saveRoot 'lint'
 $lintProcess = Invoke-RenPyProcess -Name 'lint' -RenpyArguments @($renpyPy, '--savedir', $lintSaveDir, $repoRoot, 'lint', '--error-code')
@@ -215,7 +246,9 @@ $cases = @(
     [pscustomobject]@{ Name = 'theme_runtime_status_screens'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_game_menu_surfaces'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_semantic_foreground_contrast'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
+    [pscustomobject]@{ Name = 'theme_speaker_name_colors_are_distinct_and_readable'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_namebox_stable_size'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
+    [pscustomobject]@{ Name = 'theme_main_menu_hover_text_contrast'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_game_menu_navigation_card_alignment'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_pause_main_menu_confirm_layer'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'theme_palette_chrome_and_compact_controls'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
@@ -230,6 +263,8 @@ $cases = @(
     [pscustomobject]@{ Name = 'demo_story_third_scene_visual'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'demo_story_history_visual'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'demo_story_save_load_resume'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
+    [pscustomobject]@{ Name = 'demo_story_save_title_legacy_and_untrusted_fallbacks'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
+    [pscustomobject]@{ Name = 'demo_story_save_title_visual'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'stage0_playback_offline'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'stage0_return'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
     [pscustomobject]@{ Name = 'stage0_jump'; Expected = 'exit 0'; Signature = $null; RequiresOfflineMongo = $false },
@@ -370,8 +405,9 @@ $summary.overall_passed = $allPassed
 $resultsPath = Join-Path $artifactRoot 'stage0-results.json'
 $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $resultsPath -Encoding utf8
 
-Write-Host ("Stage 0: JSON={0}/{1}; lint={2}; cases={3}; overall={4}; results={5}" -f `
-    (@($summary.json_validation | Where-Object passed).Count), $summary.json_validation.Count, $summary.lint.classification, `
-    (($summary.cases | ForEach-Object classification) -join ','), $summary.overall_passed, (Get-RelativeArtifactPath $resultsPath))
+Write-Host ("Stage 0: JSON={0}/{1}; theme-assets={2}; lint={3}; cases={4}; overall={5}; results={6}" -f `
+    (@($summary.json_validation | Where-Object passed).Count), $summary.json_validation.Count, $summary.theme_asset_unittest.classification, `
+    $summary.lint.classification, (($summary.cases | ForEach-Object classification) -join ','), `
+    $summary.overall_passed, (Get-RelativeArtifactPath $resultsPath))
 
 if (-not $allPassed) { exit 1 }

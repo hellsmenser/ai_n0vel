@@ -94,6 +94,10 @@ testcase demo_story_save_load_resume:
     assert playback_state.scene_id == "demo_after_bell_02"
     assert scene_session.provider_cursor == 2
     run FileSave(demo_save_slot, confirm=False, slot=True)
+    $ demo_slot_json = renpy.slot_json(demo_save_slot)
+    assert demo_slot_json["ai_novel"]["story_id"] == "demo_after_bell"
+    assert demo_slot_json["ai_novel"]["story_title"] == "После звонка"
+    assert ai_novel_story_title_from_slot_json(demo_slot_json) == "После звонка"
 
     click until "Договорились."
     run FileLoad(demo_save_slot, confirm=False, slot=True)
@@ -106,6 +110,43 @@ testcase demo_story_save_load_resume:
     assert sum("Рэн! Ты тоже слышал" in (entry.what or "") for entry in _history_list) == 1
     assert sum("Не трогай. Корпус тёплый" in (entry.what or "") for entry in _history_list) == 1
     $ stage3_delete_save(demo_save_slot)
+    run Quit(confirm=False)
+
+
+testcase demo_story_save_title_legacy_and_untrusted_fallbacks:
+    assert ai_novel_story_title_from_slot_json({"_save_name": "Старое сохранение"}) == "Старое сохранение"
+    assert ai_novel_story_title_from_slot_json({"ai_novel": {"story_title": "{color=#fff}Теги{/color}"}}) == "{color=#fff}Теги{/color}"
+    assert escape_dynamic_text(ai_novel_story_title_from_slot_json({"ai_novel": {"story_title": "{color=#fff}Теги{/color}"}})) == "{{color=#fff}Теги{{/color}"
+    assert ai_novel_story_title_from_slot_json({"ai_novel": {"story_title": "x" * 257}, "_save_name": "Legacy"}) == "Legacy"
+    assert ai_novel_story_title_from_slot_json({}) == "История без названия"
+    assert ai_novel_story_title_from_slot_json(None) == ""
+    run Quit(confirm=False)
+
+
+screen demo_story_save_title_probe():
+    modal True
+    add Solid("#101419")
+    frame:
+        xalign 0.5
+        yalign 0.5
+        xsize 520
+        ysize 180
+        padding (40, 40)
+        background theme_button_idle("romantic")
+        use ai_novel_slot_story_title(
+            {"ai_novel": {"story_title": "После звонка"}},
+            "demo_story_title_probe_text",
+            "romantic",
+        )
+
+
+testcase demo_story_save_title_visual:
+    run Show("demo_story_save_title_probe")
+    pause 0.3
+    assert renpy.get_screen("demo_story_save_title_probe") is not None
+    assert renpy.get_displayable("demo_story_save_title_probe", "demo_story_title_probe_text") is not None
+    assert renpy.screenshot(stage0_artifact_path("demo-story-save-title.png"))
+    run Hide("demo_story_save_title_probe")
     run Quit(confirm=False)
 
 

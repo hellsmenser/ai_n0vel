@@ -3,6 +3,25 @@ default _scene_session_load_rejected = False
 
 
 init python:
+    def _trusted_save_text(value):
+        return value if isinstance(value, str) and 0 < len(value) <= STORY_METADATA_MAX_TITLE else None
+
+
+    def ai_novel_story_title_from_slot_json(slot_json):
+        """Read inert save metadata without interpreting user-controlled text."""
+        if not isinstance(slot_json, dict):
+            return ""
+        payload = slot_json.get("ai_novel")
+        if isinstance(payload, dict):
+            title = _trusted_save_text(payload.get("story_title"))
+            if title is not None:
+                return title
+        legacy_name = _trusted_save_text(slot_json.get("_save_name"))
+        if legacy_name is not None:
+            return legacy_name
+        return "История без названия"
+
+
     def ai_novel_history_context(history_entry):
         """Annotate Ren'Py's own history entry with immutable scene context."""
         state = renpy.store.playback_state
@@ -22,20 +41,27 @@ init python:
 
     def ai_novel_save_json(save_json):
         """Expose inert playback metadata to save-slot screens and tooling."""
+        payload = {}
         state = renpy.store.playback_state
-        if not isinstance(state, PlaybackState):
-            return
-        if state.content_hash is None or verify_playback_state(state) is not None:
-            return
+        if (isinstance(state, PlaybackState)
+                and state.content_hash is not None
+                and verify_playback_state(state) is None):
+            payload.update({
+                "scene_id": state.scene_id,
+                "step_index": state.step_index,
+                "schema_version": state.schema_version,
+                "state_version": state.state_version,
+                "content_hash": state.content_hash,
+                "phase": state.phase,
+            })
 
-        save_json["ai_novel"] = {
-            "scene_id": state.scene_id,
-            "step_index": state.step_index,
-            "schema_version": state.schema_version,
-            "state_version": state.state_version,
-            "content_hash": state.content_hash,
-            "phase": state.phase,
-        }
+        metadata = getattr(renpy.store, "story_metadata", None)
+        if isinstance(metadata, dict) and verify_story_metadata(metadata) is None:
+            payload["story_id"] = metadata["story_id"]
+            payload["story_title"] = metadata["title"]
+
+        if payload:
+            save_json["ai_novel"] = payload
 
 
     def ai_novel_after_load():

@@ -56,6 +56,8 @@
 
 Доступные theme IDs: `default`, `modern_muted`, `literary`, `romantic`, `lovecraft_biopunk`, `high_fantasy`, `science_fiction`. У default есть варианты `default`, `graphite_sage`, `warm_parchment`, `muted_blue`, `subdued_plum`. Графические элементы не содержат текста; default palette variants используют runtime tint и не дублируют PNG.
 
+Тонкие рамки и орнаменты генерируются детерминированно с 2x supersampling и premultiplied-alpha downsampling; у больших pause-панелей сглаживаются только углы и полоса декора, чтобы не расходовать память на плоский центр. Namebox имеет компактный базовый размер и расширяется только для длинного имени. Цвет имени назначается по `character_id` и порядку `story_metadata.cast`, оставаясь различимым на фактическом фоне namebox. Карточка сохранения показывает безопасно экранированное название истории из `ai_novel.story_title`, затем legacy `_save_name`, а для старого безымянного слота — нейтральный fallback.
+
 ## Act-хендлеры
 Каждый элемент `dialogue[]` имеет поле `type`, для которого существует обработчик `handle_<type>(step, chars) -> PlaybackActionResult`.
 - Результат явно имеет вид `continue`, `scene_end`, `goto` или `error`. Handler не должен сам вызывать `renpy.jump()` и скрыто менять control flow.
@@ -143,6 +145,8 @@ Runner использует `F:\renpy\renpy-8.3.4-sdk` по умолчанию, 
 Последний полный одиночный прогон 2026-10-24: JSON fixtures `37/37`, lint `PASS`, native testcases `101/101`, `overall_passed=true`, свежих error diagnostics нет. В матрицу входят regression-сценарии всех мутаций story builder/asset library, валидного и невалидного запуска истории, сохранения focus через screen rebuild, mouse caret и переходов Up/Down по перенесённым и пустым строкам. Отдельный `tools/run_gui_visual_matrix.ps1` подтверждает small/touch варианты главного меню, story builder и asset library.
 
 Проверка текущего GUI/demo-среза 2026-10-29: Ren'Py lint `PASS`, small/touch visual matrix `PASS`, новые theme, product-GUI, demo и character-slot cases проходят в изолированных savedir; Python-suite orchestrator — `30/30`. Один cumulative запуск завис на `demo_story_history_visual`, после чего тот же case прошёл изолированно без свежих diagnostics. Полный baseline текущего worktree не заявляется зелёным: 38 отслеживаемых `game/test_fixtures/*` удалены локально и не входят в этот коммит; без решения об их восстановлении runner не может воспроизвести исторический `101/101`.
+
+UI-polish 2026-10-30: generator regressions `4/4`, Ren'Py lint `PASS`, focused cases для namebox, hover, 65 уникальных speaker colors, save-title escaping/fallback и visual component — `5/5`. Сквозной `demo_story_save_load_resume` повторно завис без свежего traceback и не заявляется зелёным; реальные `FileJson`/`FileTime`, JSON metadata сохранения и общий title-component проверены отдельно.
 
 `PlaybackState.state_version == 2` — текущая совместимая версия save-state. Старые или повреждённые состояния не мигрируются неявно: после load они fail-closed переводятся в структурированную ошибку до вызова handler.
 

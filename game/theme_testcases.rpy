@@ -229,6 +229,50 @@ testcase theme_semantic_foreground_contrast:
     run Quit(confirm=False)
 
 
+testcase theme_speaker_name_colors_are_distinct_and_readable:
+    $ previous_metadata = story_metadata
+    python:
+        test_cast = []
+        for cast_index in range(STORY_METADATA_MAX_CAST):
+            test_cast.append({
+                "character_id": "speaker_{:02d}".format(cast_index),
+                "display_name": "Speaker {:02d}".format(cast_index),
+                "asset_id": "speaker_{:02d}".format(cast_index),
+            })
+        story_metadata = validate_story_metadata({
+            "schema_version": 1,
+            "story_id": "speaker-color-probe",
+            "title": "Speaker color probe",
+            "synopsis": "",
+            "cast": test_cast,
+            "ui": {},
+        })
+        cast_ids = [member["character_id"] for member in story_metadata["cast"]] + ["narrator"]
+        for packaged_theme_id in THEME_IDS:
+            for runtime_palette_id in THEME_REGISTRY[packaged_theme_id]["palette_ids"]:
+                colors = [speaker_name_color(speaker_id, theme_id=packaged_theme_id, palette_id=runtime_palette_id) for speaker_id in cast_ids]
+                background = theme_color("panel", theme_id=packaged_theme_id, palette_id=runtime_palette_id)
+                assert len(colors) == len(set(colors))
+                assert all(theme_test_contrast_ratio(color, background) >= 4.5 for color in colors)
+                assert colors[0] == speaker_name_color(cast_ids[0], theme_id=packaged_theme_id, palette_id=runtime_palette_id)
+        story_metadata = validate_story_metadata({
+            "schema_version": 1,
+            "story_id": "known-collision-probe",
+            "title": "Known collision probe",
+            "synopsis": "",
+            "cast": [
+                {"character_id": speaker_id, "display_name": speaker_id.title(), "asset_id": speaker_id}
+                for speaker_id in ("akari", "ren", "lira", "kael")
+            ],
+            "ui": {},
+        })
+        known_ids = ["akari", "ren", "lira", "kael", "narrator"]
+        known_colors = [speaker_name_color(speaker_id, theme_id="romantic") for speaker_id in known_ids]
+        assert len(known_colors) == len(set(known_colors))
+    $ story_metadata = previous_metadata
+    run Quit(confirm=False)
+
+
 testcase theme_namebox_stable_size:
     $ previous_preference = getattr(persistent, "ai_novel_theme_preference", None)
     run Start("theme_namebox_host_label")
@@ -236,16 +280,32 @@ testcase theme_namebox_stable_size:
     $ short_namebox = renpy.get_displayable("say", "namebox")
     assert short_namebox is not None
     $ short_namebox_size = renpy.render(short_namebox, config.screen_width, config.screen_height, 0.0, 0.0).get_size()
-    assert short_namebox_size == (420, 72)
+    assert short_namebox_size == (300, 64)
+    $ short_namebox_placement = short_namebox.get_placement()
+    assert short_namebox_placement[0] == gui.dialogue_xpos
+    assert short_namebox_placement[2] == 0.0
     assert renpy.screenshot(stage0_artifact_path("theme-namebox-modern-muted-short.png"))
     click until "Long-name probe."
     $ long_namebox = renpy.get_displayable("say", "namebox")
     assert long_namebox is not None
     $ long_namebox_size = renpy.render(long_namebox, config.screen_width, config.screen_height, 0.0, 0.0).get_size()
     assert long_namebox_size[0] > short_namebox_size[0]
-    assert long_namebox_size[1] == 72
+    assert long_namebox_size[1] == 64
     assert renpy.screenshot(stage0_artifact_path("theme-namebox-modern-muted-long.png"))
     $ persistent.ai_novel_theme_preference = previous_preference
+    run Quit(confirm=False)
+
+
+testcase theme_main_menu_hover_text_contrast:
+    $ hover_background = theme_color("hover", theme_id="default", neutral_shell=True)
+    $ hover_text = ai_shell_hover_text_color()
+    assert hover_text == theme_color("button_hover_text", theme_id="default", neutral_shell=True)
+    assert theme_test_contrast_ratio(hover_text, hover_background) >= 4.5
+    run ShowMenu("main_menu")
+    pause 0.3
+    move (0.5, 0.5) pattern "Новая история"
+    pause 0.2
+    assert renpy.screenshot(stage0_artifact_path("theme-main-menu-hover-contrast.png"))
     run Quit(confirm=False)
 
 

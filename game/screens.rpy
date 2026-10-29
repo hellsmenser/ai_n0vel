@@ -109,7 +109,13 @@ screen say(who, what):
                 id "namebox"
                 style "namebox"
                 background theme_frame("namebox_frame.png", theme_id=_theme_id, legacy="gui/namebox.png")
-                text who id "who" font theme_font("name", theme_id=_theme_id) color theme_color("heading_text", theme_id=_theme_id)
+                text who:
+                    id "who"
+                    xfill True
+                    xalign 0.5
+                    text_align 0.5
+                    font theme_font("name", theme_id=_theme_id)
+                    color speaker_name_color(current_speaker_identity(who), theme_id=_theme_id)
 
         text what id "what" font theme_font("body", theme_id=_theme_id) color theme_color("text", theme_id=_theme_id)
 
@@ -153,7 +159,8 @@ style namebox:
 
 style say_label:
     properties gui.text_properties("name", accent=True)
-    xalign gui.name_xalign
+    xalign 0.5
+    textalign 0.5
     yalign 0.5
 
 style say_dialogue:
@@ -782,7 +789,7 @@ screen pause_menu():
                                         text h.who:
                                             substitute False
                                             font theme_font("name", theme_id=_theme_id)
-                                            color theme_color("heading_text", theme_id=_theme_id)
+                                            color speaker_name_color(history_speaker_identity(h), theme_id=_theme_id)
 
                                     $ pause_what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
                                     text pause_what:
@@ -944,6 +951,18 @@ screen load():
     use file_slots(_("Load"))
 
 
+screen ai_novel_slot_story_title(slot_json, displayable_id, theme_id):
+    $ slot_story_title = ai_novel_story_title_from_slot_json(slot_json)
+
+    if slot_story_title:
+        text escape_dynamic_text(slot_story_title):
+            id displayable_id
+            style "slot_name_text"
+            substitute False
+            font theme_font("body", theme_id=theme_id)
+            color theme_color("text", theme_id=theme_id)
+
+
 screen file_slots(title):
 
     $ _theme_id = active_theme_id(neutral_shell=main_menu)
@@ -985,6 +1004,7 @@ screen file_slots(title):
                 for i in range(gui.file_slot_cols * gui.file_slot_rows):
 
                     $ slot = i + 1
+                    $ slot_json = FileJson(slot, empty=None)
 
                     button:
                         action FileAction(slot)
@@ -998,15 +1018,12 @@ screen file_slots(title):
 
                         add FileScreenshot(slot) xalign 0.5
 
+                        use ai_novel_slot_story_title(slot_json, "slot_story_title_{}".format(slot), _theme_id)
+
                         text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
                             style "slot_time_text"
                             font theme_font("body", theme_id=_theme_id)
                             color theme_color("muted", theme_id=_theme_id)
-
-                        text FileSaveName(slot):
-                            style "slot_name_text"
-                            font theme_font("body", theme_id=_theme_id)
-                            color theme_color("text", theme_id=_theme_id)
 
                         key "save_delete" action FileDelete(slot)
 
@@ -1514,12 +1531,7 @@ screen history():
                         style "history_name"
                         substitute False
                         text_font theme_font("name", neutral_shell=main_menu)
-                        text_color theme_color("heading_text", neutral_shell=main_menu)
-
-                        ## Take the color of the who text from the Character, if
-                        ## set.
-                        if "color" in h.who_args:
-                            text_color h.who_args["color"]
+                        text_color speaker_name_color(history_speaker_identity(h), theme_id=active_theme_id(neutral_shell=main_menu))
 
                 $ what = renpy.filter_text_tags(h.what, allow=gui.history_allow_tags)
                 text what:

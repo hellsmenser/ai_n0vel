@@ -11,8 +11,8 @@ screen ai_shell_button(label, button_action, width=430, selected=False, button_i
         selected_hover_background theme_compact_button_hover("default", neutral_shell=True)
         text_font theme_font("body", theme_id="default", neutral_shell=True)
         text_color theme_color("text", theme_id="default", neutral_shell=True)
-        text_hover_color theme_color("hover", theme_id="default", neutral_shell=True)
-        text_selected_color theme_color("accent", theme_id="default", neutral_shell=True)
+        text_hover_color ai_shell_hover_text_color()
+        text_selected_color ai_shell_hover_text_color()
         text_size 28
 
 
@@ -26,7 +26,7 @@ screen ai_shell_back_button(target="main_menu"):
         hover_background theme_compact_button_hover("default", neutral_shell=True)
         text_font theme_font("body", theme_id="default", neutral_shell=True)
         text_color theme_color("text", theme_id="default", neutral_shell=True)
-        text_hover_color theme_color("hover", theme_id="default", neutral_shell=True)
+        text_hover_color ai_shell_hover_text_color()
         text_size 26
 
 

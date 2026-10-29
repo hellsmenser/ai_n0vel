@@ -8,6 +8,9 @@ define config.game_menu_action = ShowMenu("pause_menu")
 
 init -2 python:
 
+    import colorsys
+    import hashlib
+
     THEME_IDS = (
         "default",
         "modern_muted",
@@ -254,6 +257,69 @@ init -2 python:
         if role in palette:
             return palette[role]
         return THEME_REGISTRY[selected]["colors"].get(role, THEME_REGISTRY["default"]["colors"].get(role, "#ffffff"))
+
+    def _theme_relative_luminance(color):
+        value = str(color).lstrip("#")[:6]
+        if len(value) != 6:
+            return 0.0
+        channels = []
+        for index in (0, 2, 4):
+            channel = int(value[index:index + 2], 16) / 255.0
+            channels.append(channel / 12.92 if channel <= 0.04045 else ((channel + 0.055) / 1.055) ** 2.4)
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+
+    def _theme_contrast_ratio(foreground, background):
+        first = _theme_relative_luminance(foreground)
+        second = _theme_relative_luminance(background)
+        return (max(first, second) + 0.05) / (min(first, second) + 0.05)
+
+    def _trusted_story_cast_ids():
+        metadata = getattr(renpy.store, "story_metadata", None)
+        if not isinstance(metadata, dict) or verify_story_metadata(metadata) is not None:
+            return None
+        result = [member["character_id"] for member in metadata["cast"]]
+        if "narrator" not in result:
+            result.append("narrator")
+        return tuple(result)
+
+    def _speaker_color_index(speaker_id):
+        identity = str(speaker_id or "narrator")
+        cast_ids = _trusted_story_cast_ids()
+        if cast_ids is not None and identity in cast_ids:
+            return cast_ids.index(identity)
+        return int(hashlib.sha256(identity.encode("utf-8")).hexdigest()[:12], 16)
+
+    def _speaker_color_for_index(index, light_background):
+        # The irrational hue step prevents repeated hues across the maximum
+        # supported cast; alternating saturation/lightness keeps exact RGB
+        # values collision-free after rounding.
+        hue = (index * 0.38196601125) % 1.0
+        saturation = (0.62, 0.72, 0.82)[index % 3]
+        if light_background:
+            lightness = (0.14, 0.17)[(index // 3) % 2]
+        else:
+            lightness = (0.82, 0.87)[(index // 3) % 2]
+        red, green, blue = colorsys.hls_to_rgb(hue, lightness, saturation)
+        return "#{:02X}{:02X}{:02X}".format(
+            int(round(red * 255)),
+            int(round(green * 255)),
+            int(round(blue * 255)),
+        )
+
+    def speaker_name_color(speaker_id, theme_id=None, palette_id=None):
+        """Return a cast-stable speaker accent readable on namebox_frame."""
+        selected = active_theme_id() if theme_id is None else _safe_theme_id(theme_id)
+        # generate_theme_assets.panel_shape uses the panel token for
+        # namebox_frame; contrast must be checked against that actual fill.
+        background = theme_color("panel", theme_id=selected, palette_id=palette_id)
+        light_background = _theme_relative_luminance(background) > 0.35
+        candidate = _speaker_color_for_index(_speaker_color_index(speaker_id), light_background)
+        if _theme_contrast_ratio(candidate, background) >= 4.5:
+            return candidate
+        return "#101419" if light_background else "#FFFFFF"
+
+    def ai_shell_hover_text_color():
+        return theme_color("button_hover_text", theme_id="default", neutral_shell=True)
 
     def theme_palette_chrome_tint(theme_id=None, palette_id=None, neutral_shell=False):
         selected = active_theme_id(neutral_shell=neutral_shell) if theme_id is None else _safe_theme_id(theme_id)
