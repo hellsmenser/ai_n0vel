@@ -1030,16 +1030,18 @@ screen file_slots(title):
 
                         if slot_json is not None:
                             add FileScreenshot(slot):
-                                xpos 15
-                                ypos 15
+                                xalign 0.5
+                                ypos 0
+                                yanchor 0.0
                                 xysize (config.thumbnail_width, config.thumbnail_height)
                                 fit "contain"
 
                             text escape_dynamic_text(slot_story_label):
                                 id "slot_story_title_{}".format(slot)
                                 substitute False
-                                pos (15, 237)
-                                anchor (0.0, 0.0)
+                                xalign 0.5
+                                ypos 220
+                                yanchor 0.0
                                 xsize config.thumbnail_width
                                 text_align 0.5
                                 size 19
@@ -1048,8 +1050,9 @@ screen file_slots(title):
 
                             text FileTime(slot, format=_("{#file_time}%d.%m.%Y, %H:%M"), empty=""):
                                 style "slot_time_text"
-                                pos (15, 268)
-                                anchor (0.0, 0.0)
+                                xalign 0.5
+                                ypos 249
+                                yanchor 0.0
                                 xsize config.thumbnail_width
                                 text_align 0.5
                                 size 17
