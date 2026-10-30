@@ -541,9 +541,16 @@ def decorate(
         # stretch-safe corner.  The old vine-and-leaf cluster became an
         # unreadable pink blot at the navigation asset's final resolution.
         compact = h <= 100
-        heart_width, heart_height = ((24, 21) if compact else (30, 27))
-        heart_y = max(inset + heart_height // 2 - 3, heart_height // 2 + 5)
-        for heart_x in (inset + heart_width // 2, w - inset - heart_width // 2):
+        # Compact hearts must remain wholly inside the 28 px top 9-slice.
+        # If any part enters the stretch band, short buttons compress the tip
+        # and make the symbol look clipped.
+        heart_width, heart_height = ((22, 18) if compact else (30, 27))
+        heart_y = (16 if compact else max(inset + heart_height // 2 - 3, heart_height // 2 + 5))
+        side_padding = 2 if compact else 0
+        for heart_x in (
+            inset + heart_width // 2 + side_padding,
+            w - inset - heart_width // 2 - side_padding,
+        ):
             draw_heart(
                 canvas,
                 (heart_x, heart_y),

@@ -100,14 +100,23 @@ class ThemeAssetGenerationTests(unittest.TestCase):
         secondary = theme_assets.rgba(
             theme_assets.THEMES["romantic"]["colors"]["accent_secondary"]
         )
-        panel = theme_assets.rgba(theme_assets.THEMES["romantic"]["colors"]["panel"])
+        # Two filled lobes and a filled lower body distinguish the symbol from
+        # the former leaf cluster.
+        self.assertEqual(pixel(21, 13), secondary)
+        self.assertEqual(pixel(31, 13), secondary)
+        self.assertEqual(pixel(26, 21), secondary)
 
-        # Two filled lobes, a background-coloured central notch and a filled
-        # lower body distinguish the symbol from the former leaf cluster.
-        self.assertEqual(pixel(20, 15), secondary)
-        self.assertEqual(pixel(32, 15), secondary)
-        self.assertEqual(pixel(26, 15), panel)
-        self.assertEqual(pixel(26, 26), secondary)
+        # Every filled heart pixel must stay inside the immutable top 9-slice.
+        # Entering the stretch band made short buttons squeeze/crop the tip.
+        top_slice = theme_assets.ASSETS["nav_idle"][1][1]
+        heart_points = [
+            (x, y)
+            for y in range(0, top_slice + 8)
+            for x in range(width)
+            if pixel(x, y) == secondary
+        ]
+        self.assertTrue(heart_points)
+        self.assertLess(max(y for _, y in heart_points), top_slice)
 
     def test_romantic_pause_frame_and_heart_have_coverage_alpha(self) -> None:
         width, _, pixels = read_rgba_png(

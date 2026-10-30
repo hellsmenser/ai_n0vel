@@ -528,6 +528,7 @@ screen scene_provider_error(error):
 
 style navigation_button:
     size_group "navigation"
+    yminimum 70
     properties gui.button_properties("navigation_button")
 
 style navigation_button_text:
@@ -827,13 +828,13 @@ screen pause_menu():
                     font theme_font("title", theme_id=_theme_id)
                     color theme_color("heading_text", theme_id=_theme_id)
 
-                textbutton _("Return") action Return() xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
-                textbutton _("Save") action ShowMenu("save") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
-                textbutton _("Load") action ShowMenu("load") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
-                textbutton _("Preferences") action ShowMenu("preferences") xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Return") action Return() xfill True yminimum 70 text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Save") action ShowMenu("save") xfill True yminimum 70 text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Load") action ShowMenu("load") xfill True yminimum 70 text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                textbutton _("Preferences") action ShowMenu("preferences") xfill True yminimum 70 text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
                 if not _in_replay:
-                    textbutton _("Main Menu") action MainMenu() xfill True text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
+                    textbutton _("Main Menu") action MainMenu() xfill True yminimum 70 text_xalign 0.5 idle_background theme_button_idle(_theme_id) hover_background theme_button_hover(_theme_id) text_font theme_font("body", theme_id=_theme_id) text_color theme_color("text", theme_id=_theme_id) text_hover_color theme_color("button_hover_text", theme_id=_theme_id)
 
     key "game_menu" action Return()
 
@@ -953,12 +954,17 @@ screen load():
 
 screen ai_novel_slot_story_title(slot_json, displayable_id, theme_id):
     $ slot_story_title = ai_novel_story_title_from_slot_json(slot_json)
+    $ slot_story_label = slot_story_title if len(slot_story_title) <= 32 else slot_story_title[:31] + "…"
 
-    if slot_story_title:
-        text escape_dynamic_text(slot_story_title):
+    if slot_story_label:
+        text escape_dynamic_text(slot_story_label):
             id displayable_id
             style "slot_name_text"
             substitute False
+            xfill True
+            xalign 0.5
+            text_align 0.5
+            size 19
             font theme_font("body", theme_id=theme_id)
             color theme_color("text", theme_id=theme_id)
 
@@ -979,10 +985,12 @@ screen file_slots(title):
 
             ## The page name, which can be edited by clicking on a button.
             button:
+                id "save_page_label"
                 style "page_label"
 
                 key_events True
                 xalign 0.5
+                yoffset -24
                 action page_name_value.Toggle()
 
                 input:
@@ -993,6 +1001,7 @@ screen file_slots(title):
 
             ## The grid of file slots.
             grid gui.file_slot_cols gui.file_slot_rows:
+                id "save_slot_grid"
                 style_prefix "slot"
 
                 xalign 0.5
@@ -1013,15 +1022,24 @@ screen file_slots(title):
                         hover_background theme_button_hover(_theme_id)
                         selected_idle_background theme_button_hover(_theme_id)
                         selected_hover_background theme_button_hover(_theme_id)
+                        insensitive_background theme_button_idle(_theme_id)
 
-                        has vbox
+                        has vbox:
+                            spacing 0
 
-                        add FileScreenshot(slot) xalign 0.5
+                        add FileScreenshot(slot):
+                            xalign 0.5
+                            xysize (336, 189)
+                            fit "contain"
 
                         use ai_novel_slot_story_title(slot_json, "slot_story_title_{}".format(slot), _theme_id)
 
-                        text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("empty slot")):
+                        text FileTime(slot, format=_("{#file_time}%d.%m.%Y, %H:%M"), empty=_("empty slot")):
                             style "slot_time_text"
+                            xfill True
+                            xalign 0.5
+                            text_align 0.5
+                            size 17
                             font theme_font("body", theme_id=_theme_id)
                             color theme_color("muted", theme_id=_theme_id)
 
@@ -1793,8 +1811,8 @@ screen confirm(message, yes_action, no_action):
                 xalign 0.5
                 spacing 150
 
-                textbutton _("Yes") id "confirm_yes" action yes_action xsize 240 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
-                textbutton _("No") id "confirm_no" action no_action xsize 240 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
+                textbutton _("Yes") id "confirm_yes" action yes_action xsize 240 yminimum 70 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
+                textbutton _("No") id "confirm_no" action no_action xsize 240 yminimum 70 text_xalign 0.5 idle_background theme_button_idle(active_theme_id(neutral_shell=main_menu)) hover_background theme_button_hover(active_theme_id(neutral_shell=main_menu)) text_font theme_font("body", neutral_shell=main_menu) text_color theme_color("text", neutral_shell=main_menu) text_hover_color theme_color("button_hover_text", neutral_shell=main_menu)
 
     ## Right-click and escape answer "no".
     key "game_menu" action no_action
