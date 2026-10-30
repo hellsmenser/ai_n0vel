@@ -114,6 +114,8 @@ testcase demo_story_save_load_resume:
 
 
 testcase demo_story_save_title_legacy_and_untrusted_fallbacks:
+    $ native_slot_json = builtins.dict(ai_novel=builtins.dict(story_title="После звонка"))
+    assert ai_novel_story_title_from_slot_json(native_slot_json) == "После звонка"
     assert ai_novel_story_title_from_slot_json({"_save_name": "Старое сохранение"}) == "Старое сохранение"
     assert ai_novel_story_title_from_slot_json({"ai_novel": {"story_title": "{color=#fff}Теги{/color}"}}) == "{color=#fff}Теги{/color}"
     assert escape_dynamic_text(ai_novel_story_title_from_slot_json({"ai_novel": {"story_title": "{color=#fff}Теги{/color}"}})) == "{{color=#fff}Теги{{/color}"

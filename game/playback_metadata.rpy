@@ -4,15 +4,15 @@ default _scene_session_load_rejected = False
 
 init python:
     def _trusted_save_text(value):
-        return value if isinstance(value, str) and 0 < len(value) <= STORY_METADATA_MAX_TITLE else None
+        return value if isinstance(value, builtins.str) and 0 < len(value) <= STORY_METADATA_MAX_TITLE else None
 
 
     def ai_novel_story_title_from_slot_json(slot_json):
         """Read inert save metadata without interpreting user-controlled text."""
-        if not isinstance(slot_json, dict):
+        if not isinstance(slot_json, builtins.dict):
             return ""
         payload = slot_json.get("ai_novel")
-        if isinstance(payload, dict):
+        if isinstance(payload, builtins.dict):
             title = _trusted_save_text(payload.get("story_title"))
             if title is not None:
                 return title

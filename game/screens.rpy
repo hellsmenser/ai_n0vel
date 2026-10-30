@@ -1014,34 +1014,55 @@ screen file_slots(title):
 
                     $ slot = i + 1
                     $ slot_json = FileJson(slot, empty=None)
+                    $ slot_story_title = ai_novel_story_title_from_slot_json(slot_json)
+                    $ slot_story_label = slot_story_title if len(slot_story_title) <= 32 else slot_story_title[:31] + "…"
 
                     button:
                         action FileAction(slot)
-                        ysize 270
+                        xysize (gui.slot_button_width, gui.slot_button_height)
                         idle_background theme_button_idle(_theme_id)
                         hover_background theme_button_hover(_theme_id)
                         selected_idle_background theme_button_hover(_theme_id)
                         selected_hover_background theme_button_hover(_theme_id)
                         insensitive_background theme_button_idle(_theme_id)
 
-                        has vbox:
-                            spacing 0
+                        has fixed
 
-                        add FileScreenshot(slot):
-                            xalign 0.5
-                            xysize (336, 189)
-                            fit "contain"
+                        if slot_json is not None:
+                            add FileScreenshot(slot):
+                                xpos 15
+                                ypos 15
+                                xysize (config.thumbnail_width, config.thumbnail_height)
+                                fit "contain"
 
-                        use ai_novel_slot_story_title(slot_json, "slot_story_title_{}".format(slot), _theme_id)
+                            text escape_dynamic_text(slot_story_label):
+                                id "slot_story_title_{}".format(slot)
+                                substitute False
+                                pos (15, 237)
+                                anchor (0.0, 0.0)
+                                xsize config.thumbnail_width
+                                text_align 0.5
+                                size 19
+                                font theme_font("body", theme_id=_theme_id)
+                                color theme_color("text", theme_id=_theme_id)
 
-                        text FileTime(slot, format=_("{#file_time}%d.%m.%Y, %H:%M"), empty=_("empty slot")):
-                            style "slot_time_text"
-                            xfill True
-                            xalign 0.5
-                            text_align 0.5
-                            size 17
-                            font theme_font("body", theme_id=_theme_id)
-                            color theme_color("muted", theme_id=_theme_id)
+                            text FileTime(slot, format=_("{#file_time}%d.%m.%Y, %H:%M"), empty=""):
+                                style "slot_time_text"
+                                pos (15, 268)
+                                anchor (0.0, 0.0)
+                                xsize config.thumbnail_width
+                                text_align 0.5
+                                size 17
+                                font theme_font("body", theme_id=_theme_id)
+                                color theme_color("muted", theme_id=_theme_id)
+                        else:
+                            text _("empty slot"):
+                                xalign 0.5
+                                yalign 0.5
+                                text_align 0.5
+                                size 19
+                                font theme_font("body", theme_id=_theme_id)
+                                color theme_color("muted", theme_id=_theme_id)
 
                         key "save_delete" action FileDelete(slot)
 
